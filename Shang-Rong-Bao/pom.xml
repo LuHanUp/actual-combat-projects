@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>top.luhancc.actual-combat-project</groupId>
+    <artifactId>Shang-Rong-Bao</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <description>尚融宝是一个投资理财类系统，作为全栈项目涉及的知识涵盖：前端、后端及项目的业务开发</description>
+
+    <packaging>pom</packaging>
+
+</project>

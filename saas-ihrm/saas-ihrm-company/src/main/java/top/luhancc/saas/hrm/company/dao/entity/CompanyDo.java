@@ -1,11 +1,10 @@
 package top.luhancc.saas.hrm.company.dao.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import top.luhancc.saas.hrm.common.model.BaseDo;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,10 +17,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "co_company")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CompanyDo extends BaseDo implements Serializable {
     private static final long serialVersionUID = 594829320797158219L;
+
+    @Id
+    private String id;
 
     /**
      * 公司名称

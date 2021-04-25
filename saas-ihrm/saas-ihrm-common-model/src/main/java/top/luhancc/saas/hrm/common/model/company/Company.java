@@ -1,7 +1,9 @@
 package top.luhancc.saas.hrm.common.model.company;
 
 import lombok.Data;
+import top.luhancc.saas.hrm.common.model.validate.group.UpdateGroup;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -17,6 +19,7 @@ public class Company {
     /**
      * 主键id
      */
+    @NotNull(message = "主键id不能为空", groups = {UpdateGroup.class})
     private String id;
 
     /**

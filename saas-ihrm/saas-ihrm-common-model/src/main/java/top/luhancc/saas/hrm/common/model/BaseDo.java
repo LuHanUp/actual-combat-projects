@@ -13,9 +13,6 @@ import java.time.LocalDateTime;
 @Data
 public class BaseDo {
 
-    @Id
-    private String id;
-
     /**
      * 创建时间
      */

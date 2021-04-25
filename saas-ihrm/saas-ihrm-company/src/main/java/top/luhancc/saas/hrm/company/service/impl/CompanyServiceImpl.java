@@ -10,6 +10,7 @@ import top.luhancc.saas.hrm.company.mapping.CompanyMapping;
 import top.luhancc.saas.hrm.company.service.CompanyService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author luHan
@@ -37,6 +38,25 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void update(Company company) {
+        CompanyDo oldCompanyDo = companyDao.findById(company.getId()).get();
+        oldCompanyDo.setUpdateTime(LocalDateTime.now());
+        oldCompanyDo.setName(company.getName());
+        oldCompanyDo.setCompanyPhone(company.getCompanyPhone());
+        companyDao.save(oldCompanyDo);
+    }
 
+    @Override
+    public void deleteById(String id) {
+        companyDao.deleteById(id);
+    }
+
+    @Override
+    public Company findById(String id) {
+        return companyMapping.toBo(companyDao.findById(id).get());
+    }
+
+    @Override
+    public List<Company> findAll() {
+        return companyMapping.toListBo(companyDao.findAll());
     }
 }

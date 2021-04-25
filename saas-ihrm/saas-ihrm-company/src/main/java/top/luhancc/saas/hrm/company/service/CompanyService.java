@@ -2,6 +2,8 @@ package top.luhancc.saas.hrm.company.service;
 
 import top.luhancc.saas.hrm.common.model.company.Company;
 
+import java.util.List;
+
 /**
  * @author luHan
  * @create 2021/4/23 19:35
@@ -22,4 +24,15 @@ public interface CompanyService {
      * @param company
      */
     void update(Company company);
+
+    /**
+     * 根据id删除公司信息
+     *
+     * @param id
+     */
+    void deleteById(String id);
+
+    Company findById(String id);
+
+    List<Company> findAll();
 }

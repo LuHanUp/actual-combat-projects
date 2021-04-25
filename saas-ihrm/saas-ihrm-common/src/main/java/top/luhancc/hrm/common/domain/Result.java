@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
  * @author luHan
  */
 @Data
-@NoArgsConstructor
 public class Result<T> {
 
     private boolean success;//是否成功
@@ -36,27 +35,27 @@ public class Result<T> {
         this.success = success;
     }
 
-    public static Result<?> success() {
+    public static <T> Result<T> success() {
         return success(null);
     }
 
-    public static <T> Result<?> success(T data) {
+    public static <T> Result<T> success(T data) {
         return new Result<>(ResultCode.SUCCESS, data);
     }
 
-    public static Result<?> error() {
+    public static <T> Result<T> error() {
         return error(ResultCode.SERVER_ERROR.message);
     }
 
-    public static Result<?> error(String message) {
+    public static <T> Result<T> error(String message) {
         return error(ResultCode.SERVER_ERROR.code, message);
     }
 
-    public static Result<?> error(Integer code, String message) {
+    public static <T> Result<T> error(Integer code, String message) {
         return new Result<>(code, message, false);
     }
 
-    public static Result<?> fail() {
+    public static <T> Result<T> fail() {
         return new Result<>(ResultCode.FAIL);
     }
 }

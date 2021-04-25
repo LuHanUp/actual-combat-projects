@@ -16,7 +16,7 @@ import top.luhancc.hrm.common.utils.IdWorker;
  * @since 1.0.0
  */
 @SpringBootApplication
-@EntityScan(basePackages = {"top.luhancc.saas.hrm.company.dao.entity"})
+@EntityScan(value = {"top.luhancc.saas.hrm.company.dao.entity"})
 @Import({IdWorker.class})
 public class SaasIHRMCompanyApplication {
     public static void main(String[] args) {

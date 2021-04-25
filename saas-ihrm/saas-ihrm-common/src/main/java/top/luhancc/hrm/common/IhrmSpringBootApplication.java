@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import top.luhancc.hrm.common.exception.GlobalExceptionHandler;
 import top.luhancc.hrm.common.utils.IdWorker;
 
@@ -20,6 +21,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @SpringBootApplication
+@CrossOrigin // 解决跨域问题
 @Import({IdWorker.class, GlobalExceptionHandler.class})
 public @interface IhrmSpringBootApplication {
 

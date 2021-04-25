@@ -1,10 +1,8 @@
 package top.luhancc.saas.hrm.company;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Import;
-import top.luhancc.hrm.common.utils.IdWorker;
+import top.luhancc.hrm.common.IhrmSpringBootApplication;
 
 /**
  * 公司服务的启动类
@@ -15,9 +13,8 @@ import top.luhancc.hrm.common.utils.IdWorker;
  * @create 2021/4/23 19:05
  * @since 1.0.0
  */
-@SpringBootApplication
+@IhrmSpringBootApplication
 @EntityScan(value = {"top.luhancc.saas.hrm.company.dao.entity"})
-@Import({IdWorker.class})
 public class SaasIHRMCompanyApplication {
     public static void main(String[] args) {
         SpringApplication.run(SaasIHRMCompanyApplication.class, args);

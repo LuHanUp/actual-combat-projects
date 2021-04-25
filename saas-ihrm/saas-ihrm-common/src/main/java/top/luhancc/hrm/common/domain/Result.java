@@ -51,11 +51,15 @@ public class Result<T> {
         return error(ResultCode.SERVER_ERROR.code, message);
     }
 
-    public static <T> Result<T> error(Integer code, String message) {
-        return new Result<>(code, message, false);
+    public static <T> Result<T> error(ResultCode resultCode, String message) {
+        return error(resultCode.code(), message);
     }
 
     public static <T> Result<T> fail() {
         return new Result<>(ResultCode.FAIL);
+    }
+
+    private static <T> Result<T> error(Integer code, String message) {
+        return new Result<>(code, message, false);
     }
 }

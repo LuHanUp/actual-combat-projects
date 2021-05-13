@@ -14,7 +14,7 @@ import top.luhancc.hrm.common.IhrmSpringBootApplication;
  * @since 1.0.0
  */
 @IhrmSpringBootApplication
-@EntityScan(value = {"top.luhancc.saas.hrm.company.dao.entity"})
+@EntityScan(value = {"top.luhancc.saas.hrm.common.model.company"})
 public class SaasIHRMCompanyApplication {
     public static void main(String[] args) {
         SpringApplication.run(SaasIHRMCompanyApplication.class, args);

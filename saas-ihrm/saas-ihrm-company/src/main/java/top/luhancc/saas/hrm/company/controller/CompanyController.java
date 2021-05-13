@@ -1,11 +1,12 @@
 package top.luhancc.saas.hrm.company.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.company.Company;
-import top.luhancc.saas.hrm.common.model.validate.group.UpdateGroup;
 import top.luhancc.saas.hrm.company.service.CompanyService;
 
 import java.util.List;
@@ -18,36 +19,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/company")
-public class CompanyController {
-    private final CompanyService companyService;
-
-    @RequestMapping(method = RequestMethod.POST)
-    public Result<Void> save(@Validated @RequestBody Company company) {
-        companyService.add(company);
-        return Result.success();
-    }
-
-    @RequestMapping(method = RequestMethod.PUT)
-    public Result<Void> update(@Validated(value = UpdateGroup.class) @RequestBody Company company) {
-        companyService.update(company);
-        return Result.success();
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public Result<Void> delete(@PathVariable("id") String id) {
-        companyService.deleteById(id);
-        return Result.success();
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Result<Company> findById(@PathVariable("id") String id) {
-        Company company = companyService.findById(id);
-        return Result.success(company);
-    }
+public class CompanyController extends BaseController<Company, CompanyService> {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Result<List<Company>> findAll() {
-        List<Company> companies = companyService.findAll();
+        List<Company> companies = service.findAll();
         return Result.success(companies);
     }
 }

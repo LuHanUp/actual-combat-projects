@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * 公用的Controller
@@ -58,5 +59,17 @@ public class BaseController<T, Service extends CRUDService<T>> {
     public Result<Void> delete(@PathVariable("id") String id) {
         service.deleteById(id);
         return Result.success();
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Result<T> findById(@PathVariable("id") String id) {
+        T data = service.findById(id);
+        return Result.success(data);
+    }
+
+    @RequestMapping(value = "/findAll/{companyId}", method = RequestMethod.GET)
+    public Result<List<T>> findAll(@PathVariable("companyId") String companyId) {
+        List<T> list = service.findAll(companyId);
+        return Result.success(list);
     }
 }

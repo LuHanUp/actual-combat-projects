@@ -32,7 +32,18 @@ public interface CompanyService {
      */
     void deleteById(String id);
 
+    /**
+     * 通过id查询公司信息
+     *
+     * @param id 公司id
+     * @return
+     */
     Company findById(String id);
 
+    /**
+     * 查询所有的公司信息
+     *
+     * @return
+     */
     List<Company> findAll();
 }

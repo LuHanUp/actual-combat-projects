@@ -1,8 +1,8 @@
-package top.luhancc.saas.hrm.common.model.response.department;
+package top.luhancc.saas.hrm.common.model.company.response.department;
 
 import lombok.Data;
 import top.luhancc.saas.hrm.common.model.company.Company;
-import top.luhancc.saas.hrm.common.model.department.Department;
+import top.luhancc.saas.hrm.common.model.company.Department;
 
 import java.util.List;
 

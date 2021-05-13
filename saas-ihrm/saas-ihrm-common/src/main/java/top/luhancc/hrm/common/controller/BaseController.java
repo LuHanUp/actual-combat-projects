@@ -1,4 +1,4 @@
-package top.luhancc.saas.hrm.common.model.controller;
+package top.luhancc.hrm.common.controller;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
 

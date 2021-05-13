@@ -3,7 +3,7 @@ package top.luhancc.saas.hrm.company.mapping;
 
 import org.mapstruct.Mapper;
 import top.luhancc.hrm.common.mapping.BaseMapping;
-import top.luhancc.saas.hrm.common.model.department.Department;
+import top.luhancc.saas.hrm.common.model.company.Department;
 import top.luhancc.saas.hrm.company.dao.entity.DepartmentDo;
 
 /**

@@ -2,8 +2,8 @@ package top.luhancc.saas.hrm.company.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import top.luhancc.saas.hrm.common.model.department.Department;
-import top.luhancc.saas.hrm.common.model.service.BaseService;
+import top.luhancc.saas.hrm.common.model.company.Department;
+import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.saas.hrm.company.dao.DepartmentDao;
 import top.luhancc.saas.hrm.company.dao.entity.DepartmentDo;
 import top.luhancc.saas.hrm.company.mapping.DepartmentMapping;

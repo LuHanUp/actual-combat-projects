@@ -1,6 +1,6 @@
 package top.luhancc.saas.hrm.company.service;
 
-import top.luhancc.saas.hrm.common.model.department.Department;
+import top.luhancc.saas.hrm.common.model.company.Department;
 
 import java.util.List;
 

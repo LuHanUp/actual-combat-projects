@@ -1,4 +1,4 @@
-package top.luhancc.saas.hrm.common.model.department;
+package top.luhancc.saas.hrm.common.model.company;
 
 import lombok.Data;
 

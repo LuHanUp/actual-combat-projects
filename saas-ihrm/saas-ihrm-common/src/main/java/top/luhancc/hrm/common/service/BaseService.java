@@ -1,4 +1,4 @@
-package top.luhancc.saas.hrm.common.model.service;
+package top.luhancc.hrm.common.service;
 
 import org.springframework.data.jpa.domain.Specification;
 

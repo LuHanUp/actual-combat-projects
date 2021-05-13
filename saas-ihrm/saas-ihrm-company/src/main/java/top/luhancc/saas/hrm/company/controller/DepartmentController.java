@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.company.Company;
-import top.luhancc.saas.hrm.common.model.controller.BaseController;
-import top.luhancc.saas.hrm.common.model.department.Department;
-import top.luhancc.saas.hrm.common.model.response.department.DeptListResult;
+import top.luhancc.hrm.common.controller.BaseController;
+import top.luhancc.saas.hrm.common.model.company.Department;
+import top.luhancc.saas.hrm.common.model.company.response.department.DeptListResult;
 import top.luhancc.saas.hrm.company.service.CompanyService;
 import top.luhancc.saas.hrm.company.service.DepartmentService;
 

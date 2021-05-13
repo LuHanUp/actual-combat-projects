@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.company.Company;
+import top.luhancc.saas.hrm.common.model.controller.BaseController;
 import top.luhancc.saas.hrm.common.model.department.Department;
 import top.luhancc.saas.hrm.common.model.response.department.DeptListResult;
 import top.luhancc.saas.hrm.company.service.CompanyService;
@@ -24,12 +25,12 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/company/department")
 @RequiredArgsConstructor
-public class DepartmentController {
+public class DepartmentController extends BaseController {
     private final DepartmentService departmentService;
     private final CompanyService companyService;
 
     @RequestMapping("/findAll")
-    public Result<DeptListResult> findAllByCompanyId(String companyId) {
+    public Result<DeptListResult> findAll() {
         Company company = companyService.findById(companyId);
         List<Department> depts = departmentService.findAllByCompanyId(companyId);
         DeptListResult deptListResult = new DeptListResult(company, depts);

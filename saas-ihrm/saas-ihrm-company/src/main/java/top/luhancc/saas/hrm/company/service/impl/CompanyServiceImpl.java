@@ -2,14 +2,13 @@ package top.luhancc.saas.hrm.company.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.hrm.common.utils.IdWorker;
 import top.luhancc.saas.hrm.common.model.company.Company;
 import top.luhancc.saas.hrm.company.dao.CompanyDao;
-import top.luhancc.saas.hrm.company.dao.entity.CompanyDo;
-import top.luhancc.saas.hrm.company.mapping.CompanyMapping;
 import top.luhancc.saas.hrm.company.service.CompanyService;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,30 +18,25 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class CompanyServiceImpl implements CompanyService {
+public class CompanyServiceImpl extends BaseService<Company> implements CompanyService {
     private final CompanyDao companyDao;
     private final IdWorker idWorker;
-    private final CompanyMapping companyMapping;
 
     @Override
-    public void add(Company company) {
+    public void save(Company company) {
         long nextId = idWorker.nextId();
         company.setId(nextId + "");
         company.setAuditState("0"); // 0:未审核 1:已审核
         company.setState(1); // 1:已激活 0:激活
-
-        CompanyDo companyDo = companyMapping.toDo(company);
-        companyDo.setCreateTime(LocalDateTime.now());
-        companyDao.save(companyDo);
+        companyDao.save(company);
     }
 
     @Override
     public void update(Company company) {
-        CompanyDo oldCompanyDo = companyDao.findById(company.getId()).get();
-        oldCompanyDo.setUpdateTime(LocalDateTime.now());
-        oldCompanyDo.setName(company.getName());
-        oldCompanyDo.setCompanyPhone(company.getCompanyPhone());
-        companyDao.save(oldCompanyDo);
+        Company temp = companyDao.findById(company.getId()).get();
+        temp.setName(company.getName());
+        temp.setCompanyPhone(company.getCompanyPhone());
+        companyDao.save(temp);
     }
 
     @Override
@@ -52,11 +46,16 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Company findById(String id) {
-        return companyMapping.toBo(companyDao.findById(id).get());
+        return companyDao.findById(id).get();
     }
 
     @Override
     public List<Company> findAll() {
-        return companyMapping.toListBo(companyDao.findAll());
+        return companyDao.findAll();
+    }
+
+    @Override
+    public List<Company> findAll(String companyId) {
+        return Collections.singletonList(findById(companyId));
     }
 }

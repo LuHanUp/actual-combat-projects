@@ -2,7 +2,7 @@ package top.luhancc.saas.hrm.company.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import top.luhancc.saas.hrm.company.dao.entity.DepartmentDo;
+import top.luhancc.saas.hrm.common.model.company.Department;
 
 /**
  * 部门dao接口
@@ -11,7 +11,7 @@ import top.luhancc.saas.hrm.company.dao.entity.DepartmentDo;
  * @create 2021/5/13 10:43
  * @since 1.0.0
  */
-public interface DepartmentDao extends JpaRepository<DepartmentDo, String>, JpaSpecificationExecutor<DepartmentDo> {
+public interface DepartmentDao extends JpaRepository<Department, String>, JpaSpecificationExecutor<Department> {
 
     /**
      * 通过code和公司id查询部门信息
@@ -20,5 +20,5 @@ public interface DepartmentDao extends JpaRepository<DepartmentDo, String>, JpaS
      * @param companyId
      * @return
      */
-    DepartmentDo findByCodeAndCompanyId(String code, String companyId);
+    Department findByCodeAndCompanyId(String code, String companyId);
 }

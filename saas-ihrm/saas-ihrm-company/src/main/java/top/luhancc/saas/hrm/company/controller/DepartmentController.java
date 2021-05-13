@@ -25,14 +25,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/company/department")
 @RequiredArgsConstructor
-public class DepartmentController extends BaseController {
-    private final DepartmentService departmentService;
+public class DepartmentController extends BaseController<Department, DepartmentService> {
     private final CompanyService companyService;
 
     @RequestMapping("/findAll")
     public Result<DeptListResult> findAll() {
         Company company = companyService.findById(companyId);
-        List<Department> depts = departmentService.findAllByCompanyId(companyId);
+        List<Department> depts = service.findAllByCompanyId(companyId);
         DeptListResult deptListResult = new DeptListResult(company, depts);
         return Result.success(deptListResult);
     }

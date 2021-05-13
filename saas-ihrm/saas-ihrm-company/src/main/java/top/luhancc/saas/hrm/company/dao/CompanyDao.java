@@ -2,7 +2,7 @@ package top.luhancc.saas.hrm.company.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import top.luhancc.saas.hrm.company.dao.entity.CompanyDo;
+import top.luhancc.saas.hrm.common.model.company.Company;
 
 /**
  * co_company表的dao接口
@@ -14,5 +14,5 @@ import top.luhancc.saas.hrm.company.dao.entity.CompanyDo;
  * @create 2021/4/23 19:27
  * @since 1.0.0
  */
-public interface CompanyDao extends JpaRepository<CompanyDo, String>, JpaSpecificationExecutor<CompanyDo> {
+public interface CompanyDao extends JpaRepository<Company, String>, JpaSpecificationExecutor<Company> {
 }

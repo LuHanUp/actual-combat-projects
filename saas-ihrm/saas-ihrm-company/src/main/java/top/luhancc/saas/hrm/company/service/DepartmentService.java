@@ -1,5 +1,6 @@
 package top.luhancc.saas.hrm.company.service;
 
+import top.luhancc.hrm.common.service.CRUDService;
 import top.luhancc.saas.hrm.common.model.company.Department;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * @create 2021/5/13 10:38
  * @since 1.0.0
  */
-public interface DepartmentService {
+public interface DepartmentService extends CRUDService<Department> {
 
     /**
      * 获取指定公司下的所有部门信息

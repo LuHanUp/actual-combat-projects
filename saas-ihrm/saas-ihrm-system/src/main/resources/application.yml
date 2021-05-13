@@ -1,0 +1,14 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: saas-ihrm-system
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.142:3306/saas_ihrm_company?useUnicode=true&characterEncoding=utf8&useSSL=true
+    username: root
+    password: 123456
+  jpa:
+    show-sql: true # 显示sql语句
+    open-in-view: true
+    database: mysql

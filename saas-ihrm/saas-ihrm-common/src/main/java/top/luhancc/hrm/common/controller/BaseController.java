@@ -62,7 +62,7 @@ public class BaseController<T, Service extends CRUDService<T>> {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Result<T> findById(@PathVariable("id") String id) {
+    public Result<?> findById(@PathVariable("id") String id) {
         T data = service.findById(id);
         return Result.success(data);
     }

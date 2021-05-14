@@ -2,16 +2,15 @@ package top.luhancc.saas.hrm.system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.PageResult;
 import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.common.model.system.response.UserResult;
 import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
+import top.luhancc.saas.hrm.system.mapping.UserMapping;
 import top.luhancc.saas.hrm.system.service.UserService;
 
 /**
@@ -23,11 +22,19 @@ import top.luhancc.saas.hrm.system.service.UserService;
 @RequiredArgsConstructor
 @RequestMapping(value = "/sys/user")
 public class UserController extends BaseController<User, UserService> {
+    private final UserMapping userMapping;
 
     @RequestMapping(value = "/findAllByQuery", method = RequestMethod.GET)
     public Result<PageResult<User>> findAll(UserQuery userQuery) {
         Page<User> userPage = service.findAll(companyId, userQuery);
         return Result.success(new PageResult<>(userPage));
+    }
+
+    @Override
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Result<UserResult> findById(@PathVariable("id") String id) {
+        User user = service.findById(id);
+        return Result.success(new UserResult(user));
     }
 
     /**

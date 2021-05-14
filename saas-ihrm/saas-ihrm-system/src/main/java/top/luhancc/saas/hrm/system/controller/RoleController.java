@@ -2,14 +2,12 @@ package top.luhancc.saas.hrm.system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.PageResult;
 import top.luhancc.saas.hrm.common.model.system.Role;
+import top.luhancc.saas.hrm.common.model.system.response.RoleResult;
 import top.luhancc.saas.hrm.system.domain.param.AssignPermParam;
 import top.luhancc.saas.hrm.system.domain.query.RoleQuery;
 import top.luhancc.saas.hrm.system.service.RoleService;
@@ -25,6 +23,13 @@ import top.luhancc.saas.hrm.system.service.RoleService;
 @RequiredArgsConstructor
 @RequestMapping(value = "/sys/role")
 public class RoleController extends BaseController<Role, RoleService> {
+
+    @Override
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Result<RoleResult> findById(@PathVariable("id") String id) {
+        Role role = service.findById(id);
+        return Result.success(new RoleResult(role));
+    }
 
     @RequestMapping(value = "/findByPage", method = RequestMethod.GET)
     public Result<PageResult<Role>> findByPage(RoleQuery query) {

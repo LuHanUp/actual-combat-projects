@@ -3,6 +3,7 @@ package top.luhancc.saas.hrm.system.service;
 import org.springframework.data.domain.Page;
 import top.luhancc.hrm.common.service.CRUDService;
 import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
 
 /**
@@ -12,4 +13,11 @@ import top.luhancc.saas.hrm.system.domain.query.UserQuery;
  */
 public interface UserService extends CRUDService<User> {
     public Page<User> findAll(UserQuery userQuery);
+
+    /**
+     * 分配角色
+     *
+     * @param assignRoleParam
+     */
+    void assignRoles(AssignRoleParam assignRoleParam);
 }

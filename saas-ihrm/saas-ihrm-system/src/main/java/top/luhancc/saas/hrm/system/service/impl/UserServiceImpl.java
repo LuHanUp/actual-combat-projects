@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.hrm.common.utils.IdWorker;
+import top.luhancc.saas.hrm.common.model.system.Role;
 import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.system.dao.RoleDao;
 import top.luhancc.saas.hrm.system.dao.UserDao;
+import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
 import top.luhancc.saas.hrm.system.service.UserService;
 
@@ -18,7 +21,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author luHan
@@ -29,6 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl extends BaseService<User> implements UserService {
     private final UserDao userDao;
+    private final RoleDao roleDao;
     private final IdWorker idWorker;
 
     @Override
@@ -94,6 +100,20 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         };
         // 因为spring jpa的分页页码是从0开始的  所以这里需要将前端传递过来的页码 - 1
         return userDao.findAll(specification, PageRequest.of(userQuery.getPage() - 1, userQuery.getSize()));
+    }
+
+    @Override
+    public void assignRoles(AssignRoleParam assignRoleParam) {
+        User user = userDao.findById(assignRoleParam.getUserId()).get();
+        // 设置用户的角色集合
+        Set<Role> roles = new HashSet<>();
+        for (String roleId : assignRoleParam.getRoleIds()) {
+            Role role = roleDao.findById(roleId).get();
+            roles.add(role);
+        }
+        user.setRoles(roles);
+        // 更新用户,因为给用户设置了roles jpa会自动维护用户和角色之间的关系
+        userDao.save(user);
     }
 
     @Override

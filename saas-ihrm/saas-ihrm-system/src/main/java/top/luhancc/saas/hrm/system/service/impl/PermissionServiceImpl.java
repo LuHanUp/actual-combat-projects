@@ -150,7 +150,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Page<Permission> findAll(PermissionQuery query) {
+    public Page<Permission> findAll(String companyId, PermissionQuery query) {
         //1.需要查询条件
         Specification<Permission> spec = new Specification<Permission>() {
             /**

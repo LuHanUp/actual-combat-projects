@@ -22,6 +22,4 @@ public class PermissionQuery extends PageQuery {
     private Integer enVisible;
 
     private String pId;
-
-    private String companyId;
 }

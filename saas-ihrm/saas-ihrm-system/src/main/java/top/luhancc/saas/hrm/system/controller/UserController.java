@@ -26,8 +26,7 @@ public class UserController extends BaseController<User, UserService> {
 
     @RequestMapping(value = "/findAllByQuery", method = RequestMethod.GET)
     public Result<PageResult<User>> findAll(UserQuery userQuery) {
-        userQuery.setCompanyId(companyId);
-        Page<User> userPage = service.findAll(userQuery);
+        Page<User> userPage = service.findAll(companyId, userQuery);
         return Result.success(new PageResult<>(userPage));
     }
 

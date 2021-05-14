@@ -18,5 +18,4 @@ public class UserQuery extends PageQuery {
      */
     private Integer hasDept;
     private String departmentId;
-    private String companyId;
 }

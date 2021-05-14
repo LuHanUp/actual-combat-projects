@@ -73,15 +73,15 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
-    public Page<User> findAll(UserQuery userQuery) {
+    public Page<User> findAll(String companyId, UserQuery userQuery) {
         Specification<User> specification = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
 
                 // 当公司id不为空时,添加公司id的条件
-                if (!StringUtils.isEmpty(userQuery.getCompanyId())) {
-                    predicates.add(criteriaBuilder.equal(root.get("companyId").as(String.class), userQuery.getCompanyId()));
+                if (!StringUtils.isEmpty(companyId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("companyId").as(String.class), companyId));
                 }
                 // 当部门id不为空时,添加部门id的条件
                 if (!StringUtils.isEmpty(userQuery.getDepartmentId())) {

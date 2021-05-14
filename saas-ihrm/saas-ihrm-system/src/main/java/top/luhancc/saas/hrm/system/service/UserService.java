@@ -12,7 +12,7 @@ import top.luhancc.saas.hrm.system.domain.query.UserQuery;
  * @since 1.0.0
  */
 public interface UserService extends CRUDService<User> {
-    public Page<User> findAll(UserQuery userQuery);
+    public Page<User> findAll(String companyId, UserQuery userQuery);
 
     /**
      * 分配角色

@@ -69,7 +69,7 @@ public class BaseController<T, Service extends CRUDService<T>> {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Result<?> findAll() {
-        List<T> list = service.findAll(companyId);
+        List<T> list = service.findAll(companyId, userQuery);
         return Result.success(list);
     }
 }

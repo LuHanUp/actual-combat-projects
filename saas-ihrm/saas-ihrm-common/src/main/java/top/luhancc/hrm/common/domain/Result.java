@@ -47,6 +47,10 @@ public class Result<T> {
         return error(ResultCode.SERVER_ERROR.message);
     }
 
+    public static <T> Result<T> error(ResultCode resultCode) {
+        return error(resultCode.code, resultCode.message);
+    }
+
     public static <T> Result<T> error(String message) {
         return error(ResultCode.SERVER_ERROR.code, message);
     }

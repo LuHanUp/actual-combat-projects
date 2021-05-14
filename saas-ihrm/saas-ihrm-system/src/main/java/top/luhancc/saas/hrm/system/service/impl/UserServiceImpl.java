@@ -117,6 +117,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
+    public User findByMobile(String mobile) {
+        return userDao.findByMobile(mobile);
+    }
+
+    @Override
     public void deleteById(String id) {
         userDao.deleteById(id);
     }

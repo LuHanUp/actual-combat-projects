@@ -12,3 +12,6 @@ spring:
     show-sql: true # 显示sql语句
     open-in-view: true
     database: mysql
+jwt.config:
+  ttl: 3600
+  key: saas-ihrm

@@ -20,4 +20,12 @@ public interface UserService extends CRUDService<User> {
      * @param assignRoleParam
      */
     void assignRoles(AssignRoleParam assignRoleParam);
+
+    /**
+     * 通过mobile获取User
+     *
+     * @param mobile 电话
+     * @return
+     */
+    User findByMobile(String mobile);
 }

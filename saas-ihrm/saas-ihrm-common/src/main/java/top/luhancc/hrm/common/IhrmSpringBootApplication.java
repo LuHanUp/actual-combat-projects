@@ -2,12 +2,14 @@ package top.luhancc.hrm.common;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import top.luhancc.hrm.common.exception.GlobalExceptionHandler;
 import top.luhancc.hrm.common.utils.IdWorker;
+import top.luhancc.hrm.common.utils.JwtUtils;
 
 import java.lang.annotation.*;
 
@@ -22,6 +24,7 @@ import java.lang.annotation.*;
 @Inherited
 @SpringBootApplication
 @CrossOrigin // 解决跨域问题
+@EnableConfigurationProperties({JwtUtils.class})
 @Import({IdWorker.class, GlobalExceptionHandler.class})
 public @interface IhrmSpringBootApplication {
 

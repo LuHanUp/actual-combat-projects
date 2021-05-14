@@ -6,12 +6,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.hrm.common.utils.IdWorker;
+import top.luhancc.saas.hrm.common.model.system.Permission;
 import top.luhancc.saas.hrm.common.model.system.Role;
+import top.luhancc.saas.hrm.system.dao.PermissionDao;
 import top.luhancc.saas.hrm.system.dao.RoleDao;
+import top.luhancc.saas.hrm.system.domain.param.AssignPermParam;
 import top.luhancc.saas.hrm.system.domain.query.RoleQuery;
 import top.luhancc.saas.hrm.system.service.RoleService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author luHan
@@ -22,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleServiceImpl extends BaseService<Role> implements RoleService {
     private final RoleDao roleDao;
+    private final PermissionDao permissionDao;
     private final IdWorker idWorker;
 
     @Override
@@ -57,5 +63,17 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
     @Override
     public Page<Role> findByPage(String companyId, RoleQuery query) {
         return roleDao.findAll(specByCompanyId(companyId), PageRequest.of(query.getPage() - 1, query.getSize()));
+    }
+
+    @Override
+    public void assignPerms(AssignPermParam assignPermParam) {
+        Role role = roleDao.findById(assignPermParam.getRoleId()).get();
+        Set<Permission> perms = new HashSet<>();
+        for (String permsId : assignPermParam.getPermsIds()) {
+            Permission permission = permissionDao.findById(permsId).get();
+            perms.add(permission);
+        }
+        role.setPermissions(perms);
+        roleDao.save(role);
     }
 }

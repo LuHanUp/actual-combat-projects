@@ -2,6 +2,7 @@ package top.luhancc.saas.hrm.system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.PageResult;
 import top.luhancc.saas.hrm.common.model.system.Role;
+import top.luhancc.saas.hrm.system.domain.param.AssignPermParam;
 import top.luhancc.saas.hrm.system.domain.query.RoleQuery;
 import top.luhancc.saas.hrm.system.service.RoleService;
 
@@ -28,5 +30,11 @@ public class RoleController extends BaseController<Role, RoleService> {
     public Result<PageResult<Role>> findByPage(RoleQuery query) {
         Page<Role> rolePage = service.findByPage(companyId, query);
         return Result.success(new PageResult<>(rolePage));
+    }
+
+    @RequestMapping(value = "/assignPerms", method = RequestMethod.POST)
+    public Result<Void> assignPerms(@RequestBody AssignPermParam assignPermParam) {
+        service.assignPerms(assignPermParam);
+        return Result.success();
     }
 }

@@ -11,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+
+/**
+ * 权限数据实体类
+ */
 @Entity
 @Table(name = "pe_permission")
 @Getter
@@ -35,7 +39,7 @@ public class Permission implements Serializable {
     private Integer type;
 
     /**
-     * 权限编码
+     * 权限编码，根据权限编码code进行比较当前用户是否拥有这个权限
      */
     private String code;
 

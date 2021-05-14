@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * 菜单类别的权限
+ */
 @Entity
 @Table(name = "pe_permission_menu")
 @Getter

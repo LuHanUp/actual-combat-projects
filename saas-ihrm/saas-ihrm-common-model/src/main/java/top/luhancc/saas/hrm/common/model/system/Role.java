@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * 角色数据实体类
+ */
 @Entity
 @Table(name = "pe_role")
 @Getter
@@ -30,15 +33,15 @@ public class Role implements Serializable {
      */
     private String companyId;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy="roles")  //不维护中间表
+    @JsonIgnore // 因为使用了多对多的关系映射,会导致json转化时出现无限循环的情况,所以需要忽略这个字段
+    @ManyToMany(mappedBy = "roles")  //不维护中间表
     private Set<User> users = new HashSet<User>(0);//角色与用户   多对多
 
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name="pe_role_permission",
-            joinColumns={@JoinColumn(name="role_id",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="permission_id",referencedColumnName="id")})
+    @JoinTable(name = "pe_role_permission",
+            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
     private Set<Permission> permissions = new HashSet<Permission>(0);//角色与模块  多对多
 }

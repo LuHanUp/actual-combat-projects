@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping(value = "/company")
 public class CompanyController extends BaseController<Company, CompanyService> {
 
+    @Override
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Result<List<Company>> findAll() {
         List<Company> companies = service.findAll();

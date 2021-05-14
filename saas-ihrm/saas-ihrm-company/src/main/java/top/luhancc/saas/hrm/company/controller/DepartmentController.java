@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.company.Company;
-import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.saas.hrm.common.model.company.Department;
 import top.luhancc.saas.hrm.common.model.company.response.department.DeptListResult;
 import top.luhancc.saas.hrm.company.service.CompanyService;
@@ -28,7 +28,7 @@ import java.util.List;
 public class DepartmentController extends BaseController<Department, DepartmentService> {
     private final CompanyService companyService;
 
-    @RequestMapping("/findAll")
+    @Override
     public Result<DeptListResult> findAll() {
         Company company = companyService.findById(companyId);
         List<Department> depts = service.findAllByCompanyId(companyId);

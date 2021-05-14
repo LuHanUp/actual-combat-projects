@@ -34,13 +34,13 @@ public class BaseController<T, Service extends CRUDService<T>> {
         this.companyId = "1";
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public Result<Void> save(@RequestBody T entity) {
         service.save(entity);
         return Result.success();
     }
 
-    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public Result<Void> update(@PathVariable("id") String id, @RequestBody T entity) {
         Method setIdMethod = null;
         try {
@@ -55,7 +55,7 @@ public class BaseController<T, Service extends CRUDService<T>> {
         }
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public Result<Void> delete(@PathVariable("id") String id) {
         service.deleteById(id);
         return Result.success();
@@ -67,8 +67,8 @@ public class BaseController<T, Service extends CRUDService<T>> {
         return Result.success(data);
     }
 
-    @RequestMapping(value = "/findAll/{companyId}", method = RequestMethod.GET)
-    public Result<List<T>> findAll(@PathVariable("companyId") String companyId) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public Result<?> findAll() {
         List<T> list = service.findAll(companyId);
         return Result.success(list);
     }

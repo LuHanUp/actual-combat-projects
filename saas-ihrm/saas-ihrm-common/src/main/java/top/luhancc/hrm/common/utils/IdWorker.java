@@ -18,19 +18,19 @@ public class IdWorker {
     // 机器标识位数
     private final static long workerIdBits = 5L;
     // 数据中心标识位数
-    private final static long datacenterIdBits = 5L;
+    private final static long dataCenterIdBits = 5L;
     // 机器ID最大值
     private final static long maxWorkerId = -1L ^ (-1L << workerIdBits);
     // 数据中心ID最大值
-    private final static long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
+    private final static long maxDatacenterId = -1L ^ (-1L << dataCenterIdBits);
     // 毫秒内自增位
     private final static long sequenceBits = 12L;
     // 机器ID偏左移12位
     private final static long workerIdShift = sequenceBits;
     // 数据中心ID左移17位
-    private final static long datacenterIdShift = sequenceBits + workerIdBits;
+    private final static long dataCenterIdShift = sequenceBits + workerIdBits;
     // 时间毫秒左移22位
-    private final static long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+    private final static long timestampLeftShift = sequenceBits + workerIdBits + dataCenterIdBits;
 
     private final static long sequenceMask = -1L ^ (-1L << sequenceBits);
     /* 上次生产id时间戳 */
@@ -56,7 +56,7 @@ public class IdWorker {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
         if (dataCenterId > maxDatacenterId || dataCenterId < 0) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+            throw new IllegalArgumentException(String.format("dataCenter Id can't be greater than %d or less than 0", maxDatacenterId));
         }
         this.workerId = workerId;
         this.dataCenterId = dataCenterId;
@@ -86,7 +86,7 @@ public class IdWorker {
         lastTimestamp = timestamp;
         // ID偏移组合生成最终的ID，并返回ID
         long nextId = ((timestamp - twepoch) << timestampLeftShift)
-                | (dataCenterId << datacenterIdShift)
+                | (dataCenterId << dataCenterIdShift)
                 | (workerId << workerIdShift) | sequence;
 
         return nextId;
@@ -144,7 +144,7 @@ public class IdWorker {
                 id = id % (maxDataCenterId + 1);
             }
         } catch (Exception e) {
-            System.out.println(" getDataCenterId: " + e.getMessage());
+            System.out.println("getDataCenterId: " + e.getMessage());
         }
         return id;
     }

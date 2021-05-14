@@ -55,7 +55,7 @@ public class CompanyServiceImpl extends BaseService<Company> implements CompanyS
     }
 
     @Override
-    public List<Company> findAll(String companyId, UserQuery userQuery) {
+    public List<Company> findAll(String companyId) {
         return Collections.singletonList(findById(companyId));
     }
 }

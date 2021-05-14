@@ -53,7 +53,7 @@ public class DepartmentServiceImpl extends BaseService<Department> implements De
     }
 
     @Override
-    public List<Department> findAll(String companyId, UserQuery userQuery) {
+    public List<Department> findAll(String companyId) {
         return departmentDao.findAll(specByCompanyId(companyId));
     }
 

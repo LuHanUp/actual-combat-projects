@@ -12,6 +12,7 @@ import top.luhancc.saas.hrm.system.dao.PermissionDao;
 import top.luhancc.saas.hrm.system.dao.RoleDao;
 import top.luhancc.saas.hrm.system.domain.param.AssignPermParam;
 import top.luhancc.saas.hrm.system.domain.query.RoleQuery;
+import top.luhancc.saas.hrm.system.domain.type.PermissionType;
 import top.luhancc.saas.hrm.system.service.RoleService;
 
 import java.util.HashSet;
@@ -71,7 +72,10 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
         Set<Permission> perms = new HashSet<>();
         for (String permsId : assignPermParam.getPermsIds()) {
             Permission permission = permissionDao.findById(permsId).get();
+            // 根据父id和类型查询权限列表
+            List<Permission> apiPermissions = permissionDao.findByTypeAndPid(PermissionType.API, permission.getId());
             perms.add(permission);
+            perms.addAll(apiPermissions);// 赋予api权限
         }
         role.setPermissions(perms);
         roleDao.save(role);

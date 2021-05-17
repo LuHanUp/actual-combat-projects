@@ -1,6 +1,7 @@
 package top.luhancc.saas.hrm.system.controller;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -68,9 +69,11 @@ public class SystemController {
             return Result.error(ResultCode.UNAUTHENTICATED);
         }
         String token = authorization.replace("Bearer ", "");
-        Claims claims = jwtUtils.parseJwt(token);
-        if (claims == null) {
-            log.warn("token不正确,无法获取认证信息:{}", token);
+        Claims claims = null;
+        try {
+            claims = jwtUtils.parseJwt(token);
+        } catch (SignatureException e) {
+            log.warn("token不正确,无法获取认证信息:{}", token, e);
             return Result.error(ResultCode.UNAUTHENTICATED);
         }
         // 根据token获取其中的用户id

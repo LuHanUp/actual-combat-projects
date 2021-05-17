@@ -15,17 +15,22 @@ import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.utils.JwtUtils;
 import top.luhancc.saas.hrm.common.model.system.Permission;
+import top.luhancc.saas.hrm.common.model.system.Role;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
+import top.luhancc.saas.hrm.system.domain.type.PermissionType;
 import top.luhancc.saas.hrm.system.domain.type.UserLevelType;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author luHan
@@ -57,6 +62,17 @@ public class SystemController {
         map.put("companyId", user.getCompanyId());
         map.put("companyName", user.getCompanyName());
         map.put("user", user);
+
+        // 获取到当前用户可以访问的所有api权限
+        Set<String> apiCodes = new HashSet<>();
+        for (Role role : user.getRoles()) {
+            Set<Permission> permissions = role.getPermissions();
+            apiCodes.addAll(permissions.stream()
+                    .filter(permission -> permission.getType() == PermissionType.API)
+                    .map(Permission::getCode)
+                    .collect(Collectors.toSet()));
+        }
+        map.put("apiCodes", apiCodes);
         String token = jwtUtils.createJwt(user.getId(), user.getUsername(), map);
         return Result.success(token);
     }

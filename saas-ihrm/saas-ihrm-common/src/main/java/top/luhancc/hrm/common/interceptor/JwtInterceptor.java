@@ -6,7 +6,10 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ResolvableType;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.ResultCode;
@@ -16,6 +19,8 @@ import top.luhancc.saas.hrm.common.model.system.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Jwt拦截器,做鉴权处理
@@ -68,6 +73,23 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
         Object userObj = claims.get("user");
         User user = JSONObject.parseObject(JSONObject.toJSONString(userObj), User.class);
         UserContext.setCurrentUser(user);
+
+        // 验证api权限
+        Object apiCodesObj = claims.get("apiCodes");
+        Set<String> apiCodeSet = JSONObject.parseObject(JSONObject.toJSONString(apiCodesObj), HashSet.class);
+        String apiCodes = String.join(",", apiCodeSet.toArray(new String[0]));
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        RequestMapping requestMapping = handlerMethod.getMethodAnnotation(RequestMapping.class);
+        String name = requestMapping.name();
+        if (name.startsWith("#{T}")) {
+            ResolvableType resolvableType = ResolvableType.forClass(handlerMethod.getBeanType());
+            String generic_name = resolvableType.getSuperType().getGeneric(0).resolve().getSimpleName().toUpperCase();
+            name = name.replace("#{T}", generic_name);
+        }
+        if (!apiCodes.contains(name)) {
+            log.warn("当前用户[{}]没有权限访问当前路径:{}", user.getId(), request.getRequestURI());
+            throw new BaseBusinessException(ResultCode.UNAUTHORISE);
+        }
         return true;
     }
 

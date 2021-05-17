@@ -24,14 +24,14 @@ import top.luhancc.saas.hrm.system.service.UserService;
 public class UserController extends BaseController<User, UserService> {
     private final UserMapping userMapping;
 
-    @RequestMapping(value = "/findAllByQuery", method = RequestMethod.GET)
+    @RequestMapping(value = "/findAllByQuery", method = RequestMethod.GET, name = "USER_FINDALL_BY_QUERY")
     public Result<PageResult<User>> findAll(UserQuery userQuery) {
         Page<User> userPage = service.findAll(companyId, userQuery);
         return Result.success(new PageResult<>(userPage));
     }
 
     @Override
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "USER_FIND_BY_ID")
     public Result<UserResult> findById(@PathVariable("id") String id) {
         User user = service.findById(id);
         return Result.success(new UserResult(user));
@@ -42,7 +42,7 @@ public class UserController extends BaseController<User, UserService> {
      *
      * @return
      */
-    @RequestMapping(value = "/assignRoles", method = RequestMethod.PUT)
+    @RequestMapping(value = "/assignRoles", method = RequestMethod.PUT, name = "USER_ASSIGN_ROLES")
     public Result<Void> assignRoles(@RequestBody AssignRoleParam assignRoleParam) {
         service.assignRoles(assignRoleParam);
         return Result.success();

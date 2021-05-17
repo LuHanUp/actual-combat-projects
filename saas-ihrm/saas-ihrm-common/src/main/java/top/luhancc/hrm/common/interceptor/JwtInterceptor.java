@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Set;
 
+import static top.luhancc.hrm.common.controller.BaseController.ENTITY_TYPE_FLAG;
+
 /**
  * Jwt拦截器,做鉴权处理
  *
@@ -81,10 +83,10 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         RequestMapping requestMapping = handlerMethod.getMethodAnnotation(RequestMapping.class);
         String name = requestMapping.name();
-        if (name.startsWith("#{T}")) {
+        if (name.startsWith(ENTITY_TYPE_FLAG)) {
             ResolvableType resolvableType = ResolvableType.forClass(handlerMethod.getBeanType());
             String generic_name = resolvableType.getSuperType().getGeneric(0).resolve().getSimpleName().toUpperCase();
-            name = name.replace("#{T}", generic_name);
+            name = name.replace(ENTITY_TYPE_FLAG, generic_name);
         }
         if (!apiCodes.contains(name)) {
             log.warn("当前用户[{}]没有权限访问当前路径:{}", user.getId(), request.getRequestURI());

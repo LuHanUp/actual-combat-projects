@@ -25,6 +25,8 @@ public class BaseController<T, Service extends CRUDService<T>> {
     protected String companyId;
     protected String companyName;
 
+    public static final String ENTITY_TYPE_FLAG = "#{T}";
+
     @Autowired
     protected Service service;
 
@@ -36,13 +38,13 @@ public class BaseController<T, Service extends CRUDService<T>> {
         this.companyName = UserContext.getCurrentUser().getCompanyName();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, name = "#{T}_SAVE")
+    @RequestMapping(value = "", method = RequestMethod.POST, name = ENTITY_TYPE_FLAG + "_SAVE")
     public Result<Void> save(@RequestBody T entity) {
         service.save(entity);
         return Result.success();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, name = "#{T}_UPDATE")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, name = ENTITY_TYPE_FLAG + "_UPDATE")
     public Result<Void> update(@PathVariable("id") String id, @RequestBody T entity) {
         Method setIdMethod = null;
         try {
@@ -57,19 +59,19 @@ public class BaseController<T, Service extends CRUDService<T>> {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, name = "#{T}_DELETE")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, name = ENTITY_TYPE_FLAG + "_DELETE")
     public Result<Void> delete(@PathVariable("id") String id) {
         service.deleteById(id);
         return Result.success();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "#{T}_FIND_BY_ID")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = ENTITY_TYPE_FLAG + "_FIND_BY_ID")
     public Result<?> findById(@PathVariable("id") String id) {
         T data = service.findById(id);
         return Result.success(data);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET, name = "#{T}_FIND_ALL")
+    @RequestMapping(value = "", method = RequestMethod.GET, name = ENTITY_TYPE_FLAG + "_FIND_ALL")
     public Result<?> findAll() {
         List<T> list = service.findAll(companyId);
         return Result.success(list);

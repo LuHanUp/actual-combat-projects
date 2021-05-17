@@ -26,7 +26,7 @@ public class PermissionController extends BaseController<PermissionParam, Permis
 
     @RequestMapping("/findAllByQuery")
     public Result<PageResult<Permission>> findAll(PermissionQuery permissionQuery) {
-        Page<Permission> permissionPage = service.findAll(companyId, permissionQuery);
+        Page<Permission> permissionPage = service.findAll(permissionQuery);
         return Result.success(new PageResult<>(permissionPage));
     }
 }

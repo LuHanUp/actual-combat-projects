@@ -14,5 +14,5 @@ import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
  * @since 1.0.0
  */
 public interface PermissionService extends CRUDService<PermissionParam> {
-    Page<Permission> findAll(String companyId, PermissionQuery permissionQuery);
+    Page<Permission> findAll(PermissionQuery permissionQuery);
 }

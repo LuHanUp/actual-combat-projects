@@ -150,7 +150,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Page<Permission> findAll(String companyId, PermissionQuery query) {
+    public Page<Permission> findAll(PermissionQuery query) {
         //1.需要查询条件
         Specification<Permission> spec = new Specification<Permission>() {
             /**
@@ -166,7 +166,7 @@ public class PermissionServiceImpl implements PermissionService {
                 }
                 //根据enVisible查询
                 if (!StringUtils.isEmpty(query.getEnVisible())) {
-                    list.add(criteriaBuilder.equal(root.get("enVisible").as(String.class), query.getPId()));
+                    list.add(criteriaBuilder.equal(root.get("enVisible").as(String.class), query.getEnVisible()));
                 }
                 //根据类型 type
                 if (query.getType() != null) {

@@ -2,6 +2,7 @@ package top.luhancc.hrm.common.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.service.CRUDService;
 
@@ -22,6 +23,7 @@ public class BaseController<T, Service extends CRUDService<T>> {
     public HttpServletRequest request;
     public HttpServletResponse response;
     protected String companyId;
+    protected String companyName;
 
     @Autowired
     protected Service service;
@@ -30,8 +32,8 @@ public class BaseController<T, Service extends CRUDService<T>> {
     public void init(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        // TODO 后续需要动态获取
-        this.companyId = "1";
+        this.companyId = UserContext.getCurrentUser().getCompanyId();
+        this.companyName = UserContext.getCurrentUser().getCompanyName();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

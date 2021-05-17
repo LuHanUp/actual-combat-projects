@@ -15,4 +15,11 @@ import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
  */
 public interface PermissionService extends CRUDService<PermissionParam> {
     Page<Permission> findAll(PermissionQuery permissionQuery);
+
+    /**
+     * 返回权限数据总个数
+     *
+     * @return
+     */
+    Integer count();
 }

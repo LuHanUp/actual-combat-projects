@@ -184,4 +184,9 @@ public class PermissionServiceImpl implements PermissionService {
         };
         return permissionDao.findAll(spec, PageRequest.of(query.getPage() - 1, query.getSize()));
     }
+
+    @Override
+    public Integer count() {
+        return Math.toIntExact(permissionDao.count());
+    }
 }

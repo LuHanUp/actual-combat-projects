@@ -17,6 +17,7 @@ public enum ResultCode {
 
     // ---用户操作返回码 2000x----
     LOGIN_ERROR(false, 20001, "用户名或密码错误"),
+    RELOGIN_ERROR(false, 20002, "token过期,请重新登录"),
     // ---企业操作返回码 3000x----
     // ---权限操作返回码 4000x----
     // ---其他操作返回码----

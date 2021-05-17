@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.utils.JwtUtils;
@@ -18,6 +19,7 @@ import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
+import top.luhancc.saas.hrm.system.domain.type.UserLevelType;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
 
@@ -54,6 +56,7 @@ public class SystemController {
         Map<String, Object> map = new HashMap<>(2);
         map.put("companyId", user.getCompanyId());
         map.put("companyName", user.getCompanyName());
+        map.put("user", user);
         String token = jwtUtils.createJwt(user.getId(), user.getUsername(), map);
         return Result.success(token);
     }
@@ -67,32 +70,16 @@ public class SystemController {
      */
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
     public Result<UserProfileResult> profile(HttpServletRequest request) {
-        // 从请求头中获取token
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.isEmpty(authorization)) {
-            log.warn("没有携带请求头Authorization");
-            return Result.error(ResultCode.UNAUTHENTICATED);
-        }
-        String token = authorization.replace("Bearer ", "");
-        Claims claims = null;
-        try {
-            claims = jwtUtils.parseJwt(token);
-        } catch (SignatureException e) {
-            log.warn("token不正确,无法获取认证信息:{}", token, e);
-            return Result.error(ResultCode.UNAUTHENTICATED);
-        }
-        // 根据token获取其中的用户id
-        String userId = claims.getId();
-        User user = userService.findById(userId);
+        User user = userService.findById(UserContext.getUserId());
         UserProfileResult profileResult = null;
         // 根据不同的用户级别获取对应的权限
-        if ("user".equals(user.getLevel())) {
+        if (UserLevelType.USER.equals(user.getLevel())) {
             profileResult = new UserProfileResult(user);
         } else {
             PermissionQuery permissionQuery = new PermissionQuery();
             permissionQuery.setPage(1);
-            permissionQuery.setSize(1000000);
-            if ("coAdmin".equals(user.getLevel())) {
+            permissionQuery.setSize(permissionService.count());
+            if (UserLevelType.CO_ADMIN.equals(user.getLevel())) {
                 permissionQuery.setEnVisible(1);
             }
             Page<Permission> permissionPage = permissionService.findAll(permissionQuery);

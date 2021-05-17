@@ -19,25 +19,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public Result<Void> argumentExceptionHandle(IllegalArgumentException argumentException) {
-        log.warn("参数异常:{}", argumentException.getLocalizedMessage());
+        log.error("参数异常:{}", argumentException.getLocalizedMessage());
         return Result.error(ResultCode.ARGUMENT_ERROR, argumentException.getLocalizedMessage());
     }
 
     @ExceptionHandler(value = BaseBusinessException.class)
     public Result<Void> baseBusinessExceptionHandle(BaseBusinessException baseBusinessException) {
-        log.warn("业务异常:", baseBusinessException);
+        log.error("业务异常:", baseBusinessException);
         return Result.error(baseBusinessException.getResultCode(), baseBusinessException.getLocalizedMessage());
     }
 
     @ExceptionHandler(value = Exception.class)
     public Result<Void> exceptionHandle(Exception e) {
-        log.warn("程序出错了:", e);
+        log.error("程序出错了:", e);
         return Result.error();
     }
 
     @ExceptionHandler(value = Throwable.class)
     public Result<Void> throwableHandle(Throwable e) {
-        log.warn("程序出错了:", e);
+        log.error("程序出错了:", e);
         return Result.error();
     }
 }

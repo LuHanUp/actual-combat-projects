@@ -9,6 +9,7 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import top.luhancc.hrm.common.config.CrossOriginConfig;
 import top.luhancc.hrm.common.config.InterceptorConfig;
+import top.luhancc.hrm.common.config.JpaConfig;
 import top.luhancc.hrm.common.exception.GlobalExceptionHandler;
 import top.luhancc.hrm.common.utils.IdWorker;
 import top.luhancc.hrm.common.utils.JwtUtils;
@@ -27,7 +28,7 @@ import java.lang.annotation.*;
 @SpringBootApplication
 @CrossOrigin // 解决跨域问题
 @EnableConfigurationProperties({JwtUtils.class})
-@Import({IdWorker.class, GlobalExceptionHandler.class, CrossOriginConfig.class, InterceptorConfig.class})
+@Import({JpaConfig.class, IdWorker.class, GlobalExceptionHandler.class, CrossOriginConfig.class, InterceptorConfig.class})
 public @interface IhrmSpringBootApplication {
 
     /**

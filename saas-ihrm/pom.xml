@@ -8,6 +8,7 @@
         <module>saas-ihrm-common-model</module>
         <module>saas-ihrm-company</module>
         <module>saas-ihrm-system</module>
+        <module>saas-ihrm-eureka</module>
     </modules>
 
     <parent>
@@ -31,6 +32,18 @@
         <mapstruct.version>1.4.1.Final</mapstruct.version>
         <mysql.version>8.0.23</mysql.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.SR2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
     <dependencies>

@@ -19,6 +19,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new JwtInterceptor(jwtUtils)).addPathPatterns("/**").excludePathPatterns("/sys/login");
+        registry.addInterceptor(new JwtInterceptor(jwtUtils)).addPathPatterns("/**")
+                .excludePathPatterns("/sys/login", "/actuator/info", "/error/**");
     }
 }

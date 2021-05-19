@@ -2,6 +2,7 @@ package top.luhancc.saas.hrm.system;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import top.luhancc.hrm.common.IhrmSpringBootApplication;
 
 /**
@@ -13,6 +14,7 @@ import top.luhancc.hrm.common.IhrmSpringBootApplication;
  */
 @IhrmSpringBootApplication
 @EntityScan(value = {"top.luhancc.saas.hrm.common.model.system"})
+@EnableEurekaClient
 public class SaasIHRMSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(SaasIHRMSystemApplication.class, args);

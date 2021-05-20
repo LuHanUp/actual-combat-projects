@@ -1,6 +1,7 @@
 package top.luhancc.saas.hrm.system.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 import top.luhancc.hrm.common.service.CRUDService;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
@@ -28,4 +29,13 @@ public interface UserService extends CRUDService<User> {
      * @return
      */
     User findByMobile(String mobile);
+
+    /**
+     * 上传用户头像，返回Data URL
+     *
+     * @param userId 用户id
+     * @param file   头像文件
+     * @return
+     */
+    String uploadStaffPhoto(String userId, MultipartFile file);
 }

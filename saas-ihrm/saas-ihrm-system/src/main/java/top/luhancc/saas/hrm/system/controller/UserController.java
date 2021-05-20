@@ -3,6 +3,7 @@ package top.luhancc.saas.hrm.system.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.PageResult;
@@ -46,5 +47,18 @@ public class UserController extends BaseController<User, UserService> {
     public Result<Void> assignRoles(@RequestBody AssignRoleParam assignRoleParam) {
         service.assignRoles(assignRoleParam);
         return Result.success();
+    }
+
+    /**
+     * 上传用户头像，返回Data URL
+     *
+     * @param userId 用户id
+     * @param file   头像
+     * @return
+     */
+    @RequestMapping(value = "/upload/{userId}", method = RequestMethod.POST)
+    public Result<String> uploadStaffPhoto(@PathVariable("userId") String userId, @RequestParam("file") MultipartFile file) {
+        String dataUrl = service.uploadStaffPhoto(userId, file);
+        return Result.success(dataUrl);
     }
 }

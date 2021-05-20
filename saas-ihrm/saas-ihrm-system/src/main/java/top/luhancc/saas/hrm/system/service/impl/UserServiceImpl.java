@@ -1,11 +1,13 @@
 package top.luhancc.saas.hrm.system.service.impl;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.hrm.common.utils.IdWorker;
 import top.luhancc.saas.hrm.common.model.system.Role;
@@ -20,6 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -119,6 +122,23 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     public User findByMobile(String mobile) {
         return userDao.findByMobile(mobile);
+    }
+
+    @Override
+    public String uploadStaffPhoto(String userId, MultipartFile file) {
+        User user = userDao.findById(userId).get();
+        // 对图片进行Base64编码
+        String imgBase64Str = null;
+        try {
+            imgBase64Str = Base64.encode(file.getBytes());
+            // 更新用户头像
+            user.setStaffPhoto(imgBase64Str);
+            userDao.save(user);
+            return String.format("data:image/png;base64,%s", imgBase64Str);
+        } catch (IOException e) {
+            System.out.println("图片文件编码失败:" + e);
+        }
+        return null;
     }
 
     @Override

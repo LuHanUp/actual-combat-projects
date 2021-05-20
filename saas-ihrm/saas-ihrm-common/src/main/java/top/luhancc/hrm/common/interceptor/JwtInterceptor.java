@@ -16,6 +16,7 @@ import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.utils.JwtUtils;
 import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,6 +76,11 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
         Object userObj = claims.get("user");
         User user = JSONObject.parseObject(JSONObject.toJSONString(userObj), User.class);
         UserContext.setCurrentUser(user);
+
+        // 如果是saasAdmin类型的用户,不需要校验api权限
+        if (UserLevelType.SAAS_ADMIN.equals(user.getLevel())) {
+            return true;
+        }
 
         // 验证api权限
         Object apiCodesObj = claims.get("apiCodes");

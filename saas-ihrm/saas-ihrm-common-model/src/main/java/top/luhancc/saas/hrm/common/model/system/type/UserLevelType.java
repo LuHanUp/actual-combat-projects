@@ -1,4 +1,4 @@
-package top.luhancc.saas.hrm.system.domain.type;
+package top.luhancc.saas.hrm.common.model.system.type;
 
 /**
  * 用户级别level类别

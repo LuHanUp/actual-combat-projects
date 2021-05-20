@@ -20,7 +20,7 @@ import top.luhancc.saas.hrm.system.dao.PermissionMenuDao;
 import top.luhancc.saas.hrm.system.dao.PermissionPointDao;
 import top.luhancc.saas.hrm.system.domain.param.PermissionParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
-import top.luhancc.saas.hrm.system.domain.type.PermissionType;
+import top.luhancc.saas.hrm.common.model.system.type.PermissionType;
 import top.luhancc.saas.hrm.system.mapping.PermissionMapping;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 

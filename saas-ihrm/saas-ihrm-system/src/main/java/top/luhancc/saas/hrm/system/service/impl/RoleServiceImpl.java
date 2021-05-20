@@ -12,7 +12,7 @@ import top.luhancc.saas.hrm.system.dao.PermissionDao;
 import top.luhancc.saas.hrm.system.dao.RoleDao;
 import top.luhancc.saas.hrm.system.domain.param.AssignPermParam;
 import top.luhancc.saas.hrm.system.domain.query.RoleQuery;
-import top.luhancc.saas.hrm.system.domain.type.PermissionType;
+import top.luhancc.saas.hrm.common.model.system.type.PermissionType;
 import top.luhancc.saas.hrm.system.service.RoleService;
 
 import java.util.HashSet;

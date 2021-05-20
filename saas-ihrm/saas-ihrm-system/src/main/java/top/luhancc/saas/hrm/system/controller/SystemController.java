@@ -1,11 +1,8 @@
 package top.luhancc.saas.hrm.system.controller;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +17,8 @@ import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
-import top.luhancc.saas.hrm.system.domain.type.PermissionType;
-import top.luhancc.saas.hrm.system.domain.type.UserLevelType;
+import top.luhancc.saas.hrm.common.model.system.type.PermissionType;
+import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
 

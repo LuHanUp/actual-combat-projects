@@ -32,6 +32,10 @@
         <fastjson.version>1.2.47</fastjson.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>
         <mysql.version>8.0.23</mysql.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <zxing.version>3.4.0</zxing.version>
+        <poi.version>4.1.2</poi.version>
+        <baidu.version>4.15.7</baidu.version>
     </properties>
 
     <dependencyManagement>

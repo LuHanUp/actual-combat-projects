@@ -19,6 +19,7 @@ public enum ResultCode {
     LOGIN_ERROR(false, 20001, "用户名或密码错误"),
     RELOGIN_ERROR(false, 20002, "token过期,请重新登录"),
     USER_HEAD_IMG_ERROR(false, 20003, "上传用户头像失败"),
+    CREATE_QRCODE_ERROR(false, 20004, "生成二维码失败"),
     // ---企业操作返回码 3000x----
     // ---权限操作返回码 4000x----
     // ---其他操作返回码----

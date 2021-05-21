@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.system.response.FaceLoginResult;
+import top.luhancc.saas.hrm.common.model.system.response.QRCode;
 import top.luhancc.saas.hrm.system.service.FaceLoginService;
 
 /**
@@ -26,8 +27,8 @@ public class FaceLoginController {
      * 获取刷脸登录二维码
      */
     @RequestMapping(value = "/qrcode", method = RequestMethod.GET)
-    public Result<String> qrCode() throws Exception {
-        String qrCode = faceLoginService.qrCode();
+    public Result<QRCode> qrCode() throws Exception {
+        QRCode qrCode = faceLoginService.qrCode();
         return Result.success(qrCode);
     }
 

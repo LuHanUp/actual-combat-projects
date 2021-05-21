@@ -2,6 +2,7 @@ package top.luhancc.saas.hrm.system.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import top.luhancc.saas.hrm.common.model.system.response.FaceLoginResult;
+import top.luhancc.saas.hrm.common.model.system.response.QRCode;
 
 /**
  * 人脸登录service
@@ -14,8 +15,10 @@ public interface FaceLoginService {
 
     /**
      * 获取刷脸登录二维码
+     *
+     * @return
      */
-    String qrCode();
+    QRCode qrCode();
 
     /**
      * 检查二维码：登录页面轮询调用此方法，根据唯一标识code判断用户登录情况

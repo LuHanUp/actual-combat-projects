@@ -12,6 +12,9 @@ spring:
     show-sql: true # 显示sql语句
     open-in-view: true
     database: mysql
+  redis:
+    host: 192.168.2.142
+    port: 6379
 jwt.config:
   ttl: 3600
   key: saas-ihrm

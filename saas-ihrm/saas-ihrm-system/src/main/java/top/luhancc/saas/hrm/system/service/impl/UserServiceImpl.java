@@ -12,16 +12,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.hrm.common.utils.IdWorker;
+import top.luhancc.hrm.common.utils.JwtUtils;
+import top.luhancc.saas.hrm.common.model.system.Permission;
 import top.luhancc.saas.hrm.common.model.system.Role;
 import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
+import top.luhancc.saas.hrm.common.model.system.type.PermissionType;
 import top.luhancc.saas.hrm.system.dao.RoleDao;
 import top.luhancc.saas.hrm.system.dao.UserDao;
 import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
+import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
+import top.luhancc.saas.hrm.system.mapping.UserMapping;
 import top.luhancc.saas.hrm.system.service.UserService;
 import top.luhancc.saas.hrm.system.thirdservice.FaceService;
 
@@ -30,10 +37,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author luHan
@@ -47,6 +52,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     private final UserDao userDao;
     private final RoleDao roleDao;
     private final IdWorker idWorker;
+    private final JwtUtils jwtUtils;
+    private final UserMapping userMapping;
     @Autowired
     @Qualifier("baidu-face")
     private FaceService faceService;
@@ -164,6 +171,31 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             log.error("图片文件编码失败:" + e);
         }
         return null;
+    }
+
+    @Override
+    public String login(LoginParam loginParam) {
+        User user = this.findByMobile(loginParam.getMobile());
+        if (user == null || !user.getPassword().equals(loginParam.getPassword())) {
+            return null;
+        }
+        UserToken userToken = userMapping.user2UserToken(user);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("companyId", user.getCompanyId());
+        map.put("companyName", user.getCompanyName());
+        map.put("user", userToken);
+
+        // 获取到当前用户可以访问的所有api权限
+        Set<String> apiCodes = new HashSet<>();
+        for (Role role : user.getRoles()) {
+            Set<Permission> permissions = role.getPermissions();
+            apiCodes.addAll(permissions.stream()
+                    .filter(permission -> permission.getType() == PermissionType.API)
+                    .map(Permission::getCode)
+                    .collect(Collectors.toSet()));
+        }
+        map.put("apiCodes", apiCodes);
+        return jwtUtils.createJwt(user.getId(), user.getUsername(), map);
     }
 
     @Override

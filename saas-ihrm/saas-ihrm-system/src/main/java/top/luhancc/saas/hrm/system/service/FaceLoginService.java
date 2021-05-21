@@ -28,11 +28,14 @@ public interface FaceLoginService {
     /**
      * 人脸登录：根据落地页随机拍摄的面部头像进行登录
      * 根据拍摄的图片调用百度云AI进行检索查找
+     * @return
      */
-    void loginByFace(String code, MultipartFile attachment);
+    FaceLoginResult loginByFace(String code, MultipartFile attachment);
 
     /**
      * 图像检测，判断图片中是否存在面部头像
+     *
+     * @return
      */
-    void checkFace(MultipartFile attachment);
+    boolean checkFace(MultipartFile attachment);
 }

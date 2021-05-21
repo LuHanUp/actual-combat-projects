@@ -32,7 +32,7 @@ public final class QRCodeUtil {
             BitMatrix bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, 200, 200);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
             ImageIO.write(bufferedImage, "png", bos);
-            return new String("data:image/png;base64," + Base64.encode(bos.toByteArray()));
+            return "data:image/png;base64," + Base64.encode(bos.toByteArray());
         } finally {
             bos.close();
         }

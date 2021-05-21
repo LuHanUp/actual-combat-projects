@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.luhancc.hrm.common.service.CRUDService;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
+import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
 
 /**
@@ -40,4 +41,6 @@ public interface UserService extends CRUDService<User> {
      * @return
      */
     String uploadStaffPhoto(String userId, MultipartFile file);
+
+    String login(LoginParam loginParam);
 }

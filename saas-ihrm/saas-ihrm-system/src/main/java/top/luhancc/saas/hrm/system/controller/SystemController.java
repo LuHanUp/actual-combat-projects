@@ -3,6 +3,7 @@ package top.luhancc.saas.hrm.system.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,26 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
-import top.luhancc.hrm.common.utils.JwtUtils;
 import top.luhancc.saas.hrm.common.model.system.Permission;
-import top.luhancc.saas.hrm.common.model.system.Role;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
-import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
+import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
-import top.luhancc.saas.hrm.common.model.system.type.PermissionType;
-import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
-import top.luhancc.saas.hrm.system.mapping.UserMapping;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author luHan
@@ -43,8 +34,6 @@ import java.util.stream.Collectors;
 public class SystemController {
     private final UserService userService;
     private final PermissionService permissionService;
-    private final JwtUtils jwtUtils;
-    private final UserMapping userMapping;
 
     /**
      * 用户登录
@@ -56,27 +45,10 @@ public class SystemController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Result<String> login(@RequestBody LoginParam loginParam) {
-        User user = userService.findByMobile(loginParam.getMobile());
-        if (user == null || !user.getPassword().equals(loginParam.getPassword())) {
+        String token = userService.login(loginParam);
+        if (StringUtils.isEmpty(token)) {
             return Result.error(ResultCode.LOGIN_ERROR);
         }
-        UserToken userToken = userMapping.user2UserToken(user);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("companyId", user.getCompanyId());
-        map.put("companyName", user.getCompanyName());
-        map.put("user", userToken);
-
-        // 获取到当前用户可以访问的所有api权限
-        Set<String> apiCodes = new HashSet<>();
-        for (Role role : user.getRoles()) {
-            Set<Permission> permissions = role.getPermissions();
-            apiCodes.addAll(permissions.stream()
-                    .filter(permission -> permission.getType() == PermissionType.API)
-                    .map(Permission::getCode)
-                    .collect(Collectors.toSet()));
-        }
-        map.put("apiCodes", apiCodes);
-        String token = jwtUtils.createJwt(user.getId(), user.getUsername(), map);
         return Result.success(token);
     }
 

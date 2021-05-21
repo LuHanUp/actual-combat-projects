@@ -46,9 +46,9 @@ public class FaceLoginController {
      * 根据拍摄的图片调用百度云AI进行检索查找
      */
     @RequestMapping(value = "/{code}", method = RequestMethod.POST)
-    public Result<Void> loginByFace(@PathVariable(name = "code") String code, @RequestParam(name = "file") MultipartFile attachment) throws Exception {
-        faceLoginService.loginByFace(code, attachment);
-        return Result.success();
+    public Result<FaceLoginResult> loginByFace(@PathVariable(name = "code") String code, @RequestParam(name = "file") MultipartFile attachment) throws Exception {
+        FaceLoginResult faceLoginResult = faceLoginService.loginByFace(code, attachment);
+        return Result.success(faceLoginResult);
     }
 
 
@@ -56,8 +56,8 @@ public class FaceLoginController {
      * 图像检测，判断图片中是否存在面部头像
      */
     @RequestMapping(value = "/checkFace", method = RequestMethod.POST)
-    public Result<Void> checkFace(@RequestParam(name = "file") MultipartFile attachment) throws Exception {
-        faceLoginService.checkFace(attachment);
-        return Result.success();
+    public Result<Boolean> checkFace(@RequestParam(name = "file") MultipartFile attachment) throws Exception {
+        boolean hashFace = faceLoginService.checkFace(attachment);
+        return Result.success(hashFace);
     }
 }

@@ -14,7 +14,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import top.luhancc.hrm.common.interceptor.ShiroInterceptor;
 import top.luhancc.hrm.common.shiro.realm.IhrmRealm;
 import top.luhancc.hrm.common.shiro.session.CustomSessionManager;
 
@@ -138,9 +140,9 @@ public class ShiroAuthorizationConfig implements WebMvcConfigurer {
         return advisor;
     }
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new JwtInterceptor(jwtUtils)).addPathPatterns("/**")
-//                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new ShiroInterceptor(redisSessionDAO())).addPathPatterns("/**")
+                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**");
+    }
 }

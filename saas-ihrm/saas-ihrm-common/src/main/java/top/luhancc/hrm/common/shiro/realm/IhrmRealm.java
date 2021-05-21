@@ -8,8 +8,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import top.luhancc.hrm.common.context.UserContext;
-import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
 
 import java.util.Set;
@@ -32,14 +30,6 @@ public class IhrmRealm extends AuthorizingRealm {
         //3.构造权限数据，返回值
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setStringPermissions(apisPerms);
-        UserToken userToken = new UserToken();
-        userToken.setId(result.getUserId());
-        userToken.setMobile(result.getMobile());
-        userToken.setUsername(result.getUsername());
-        userToken.setCompanyId(result.getCompanyId());
-        userToken.setCompanyName(result.getCompany());
-        userToken.setLevel(result.getLevel());
-        UserContext.setCurrentUser(userToken);
         return info;
     }
 

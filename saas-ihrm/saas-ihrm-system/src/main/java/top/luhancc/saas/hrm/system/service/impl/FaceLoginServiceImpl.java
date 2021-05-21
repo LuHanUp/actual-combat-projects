@@ -78,6 +78,8 @@ public class FaceLoginServiceImpl implements FaceLoginService {
             } else {
                 if (faceLoginResult.getState() == 0) {
                     throw new BaseBusinessException(ResultCode.RELOGIN_QR_ERROR);
+                } else if (faceLoginResult.getState() == 1) {
+                    return faceLoginResult;
                 }
             }
             String image = Base64Util.encode(attachment.getBytes());
@@ -94,7 +96,7 @@ public class FaceLoginServiceImpl implements FaceLoginService {
                     faceLoginResult.setUserId(userId);
                     faceLoginResult.setToken(token);
                     faceLoginResult.setState(1);
-                    redisTemplate.boundValueOps(String.format(CODE_CACHE_KEY, code)).set(faceLoginResult);
+                    redisTemplate.boundValueOps(String.format(CODE_CACHE_KEY, code)).set(faceLoginResult, 1, TimeUnit.MILLISECONDS);
                     return faceLoginResult;
                 }
             }

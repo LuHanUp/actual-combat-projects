@@ -42,5 +42,19 @@ public interface UserService extends CRUDService<User> {
      */
     String uploadStaffPhoto(String userId, MultipartFile file);
 
+    /**
+     * jwt方式的手机号、密码登录
+     *
+     * @param loginParam 登录参数
+     * @return
+     */
     String login(LoginParam loginParam);
+
+    /**
+     * shiro方式手机号、密码登录
+     *
+     * @param loginParam 登录参数
+     * @return
+     */
+    String loginByShiro(LoginParam loginParam);
 }

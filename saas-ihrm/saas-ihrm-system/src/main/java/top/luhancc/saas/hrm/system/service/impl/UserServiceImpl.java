@@ -3,6 +3,10 @@ package top.luhancc.saas.hrm.system.service.impl;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -12,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.service.BaseService;
@@ -63,7 +66,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         //设置主键的值
         String id = idWorker.nextId() + "";
         user.setLevel("user");
-        user.setPassword("123456");//设置初始密码
+        user.setPassword(new Md5Hash("123456", user.getMobile(), 3).toString());//设置初始密码
         user.setEnableState(1);
         user.setId(id);
         //调用dao保存部门
@@ -176,7 +179,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     public String login(LoginParam loginParam) {
         User user = this.findByMobile(loginParam.getMobile());
-        if (user == null || !user.getPassword().equals(loginParam.getPassword())) {
+        String password = loginParam.getPassword();
+        password = new Md5Hash(password, loginParam.getMobile(), 3).toString();
+        if (user == null || !user.getPassword().equals(password)) {
             return null;
         }
         UserToken userToken = userMapping.user2UserToken(user);
@@ -196,6 +201,16 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         }
         map.put("apiCodes", apiCodes);
         return jwtUtils.createJwt(user.getId(), user.getUsername(), map);
+    }
+
+    @Override
+    public String loginByShiro(LoginParam loginParam) {
+        String password = loginParam.getPassword();
+        password = new Md5Hash(password, loginParam.getMobile(), 3).toString();
+        UsernamePasswordToken upToken = new UsernamePasswordToken(loginParam.getMobile(), password);
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(upToken);
+        return subject.getSession().getId().toString();
     }
 
     @Override

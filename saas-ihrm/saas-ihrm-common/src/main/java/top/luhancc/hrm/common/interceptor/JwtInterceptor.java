@@ -15,7 +15,6 @@ import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.utils.JwtUtils;
-import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
 

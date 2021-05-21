@@ -1,10 +1,12 @@
 package top.luhancc.saas.hrm.common.model.system.response;
 
 import lombok.Data;
+import org.crazycake.shiro.AuthCachePrincipal;
 import top.luhancc.saas.hrm.common.model.system.Permission;
 import top.luhancc.saas.hrm.common.model.system.Role;
 import top.luhancc.saas.hrm.common.model.system.User;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,9 +18,12 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 @Data
-public class UserProfileResult {
+public class UserProfileResult implements Serializable, AuthCachePrincipal {
     private String mobile;
+    private String userId;
+    private String level;
     private String username;
+    private String companyId;
     private String company;
 
     // 包含menus、points、apis
@@ -28,6 +33,9 @@ public class UserProfileResult {
         this.mobile = user.getMobile();
         this.username = user.getUsername();
         this.company = user.getCompanyName();
+        this.level = user.getLevel();
+        this.userId = user.getId();
+        this.companyId = user.getCompanyId();
         this.roles = new HashMap<>();
         Set<Role> roles = user.getRoles();
         Set<String> menus = new HashSet<>();
@@ -61,6 +69,9 @@ public class UserProfileResult {
         this.mobile = user.getMobile();
         this.username = user.getUsername();
         this.company = user.getCompanyName();
+        this.level = user.getLevel();
+        this.userId = user.getId();
+        this.companyId = user.getCompanyId();
         this.roles = new HashMap<>();
         Set<String> menus = new HashSet<>();
         Set<String> points = new HashSet<>();
@@ -83,5 +94,10 @@ public class UserProfileResult {
         this.roles.put("menus", menus);
         this.roles.put("points", points);
         this.roles.put("apis", apis);
+    }
+
+    @Override
+    public String getAuthCacheKey() {
+        return null;
     }
 }

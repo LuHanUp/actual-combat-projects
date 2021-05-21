@@ -36,6 +36,8 @@
         <zxing.version>3.4.0</zxing.version>
         <poi.version>4.1.2</poi.version>
         <baidu.version>4.15.7</baidu.version>
+        <shiro.version>1.3.2</shiro.version>
+        <shiro-redis.version>3.0.0</shiro-redis.version>
     </properties>
 
     <dependencyManagement>

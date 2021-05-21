@@ -79,6 +79,13 @@
             <groupId>com.baidu.aip</groupId>
             <artifactId>java-sdk</artifactId>
             <version>${baidu.version}</version>
+            <exclusions>
+                <!--排除掉此依赖,会和logback产生冲突-->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

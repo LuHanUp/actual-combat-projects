@@ -15,10 +15,12 @@ import top.luhancc.saas.hrm.common.model.system.Permission;
 import top.luhancc.saas.hrm.common.model.system.Role;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
+import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
 import top.luhancc.saas.hrm.common.model.system.type.PermissionType;
 import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
+import top.luhancc.saas.hrm.system.mapping.UserMapping;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
 
@@ -42,6 +44,7 @@ public class SystemController {
     private final UserService userService;
     private final PermissionService permissionService;
     private final JwtUtils jwtUtils;
+    private final UserMapping userMapping;
 
     /**
      * 用户登录
@@ -57,10 +60,11 @@ public class SystemController {
         if (user == null || !user.getPassword().equals(loginParam.getPassword())) {
             return Result.error(ResultCode.LOGIN_ERROR);
         }
+        UserToken userToken = userMapping.user2UserToken(user);
         Map<String, Object> map = new HashMap<>(2);
         map.put("companyId", user.getCompanyId());
         map.put("companyName", user.getCompanyName());
-        map.put("user", user);
+        map.put("user", userToken);
 
         // 获取到当前用户可以访问的所有api权限
         Set<String> apiCodes = new HashSet<>();

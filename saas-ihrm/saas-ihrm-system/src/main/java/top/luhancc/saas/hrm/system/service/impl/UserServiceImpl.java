@@ -2,12 +2,18 @@ package top.luhancc.saas.hrm.system.service.impl;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import top.luhancc.hrm.common.domain.ResultCode;
+import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.service.BaseService;
 import top.luhancc.hrm.common.utils.IdWorker;
 import top.luhancc.saas.hrm.common.model.system.Role;
@@ -17,6 +23,7 @@ import top.luhancc.saas.hrm.system.dao.UserDao;
 import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
 import top.luhancc.saas.hrm.system.service.UserService;
+import top.luhancc.saas.hrm.system.thirdservice.FaceService;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -35,10 +42,14 @@ import java.util.Set;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl extends BaseService<User> implements UserService {
     private final UserDao userDao;
     private final RoleDao roleDao;
     private final IdWorker idWorker;
+    @Autowired
+    @Qualifier("baidu-face")
+    private FaceService faceService;
 
     @Override
     public void save(User user) {
@@ -125,6 +136,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String uploadStaffPhoto(String userId, MultipartFile file) {
         User user = userDao.findById(userId).get();
         // 对图片进行Base64编码
@@ -134,9 +146,22 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             // 更新用户头像
             user.setStaffPhoto(imgBase64Str);
             userDao.save(user);
+
+            boolean faceExists = faceService.faceExists(userId);
+            boolean faceUpdate = true;
+            if (faceExists) {
+                // 更新人脸库的头像
+                faceUpdate = faceService.faceUpdate(userId, imgBase64Str);
+            } else {
+                // 将头像注册进人脸库中
+                faceUpdate = faceService.faceRegister(userId, imgBase64Str);
+            }
+            if (!faceUpdate) {
+                throw new BaseBusinessException(ResultCode.USER_HEAD_IMG_ERROR);
+            }
             return String.format("data:image/png;base64,%s", imgBase64Str);
         } catch (IOException e) {
-            System.out.println("图片文件编码失败:" + e);
+            log.error("图片文件编码失败:" + e);
         }
         return null;
     }

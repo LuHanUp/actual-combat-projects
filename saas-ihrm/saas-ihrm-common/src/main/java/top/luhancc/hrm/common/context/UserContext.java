@@ -2,7 +2,7 @@ package top.luhancc.hrm.common.context;
 
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
-import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 
 /**
  * 用户上下文信息,只有在登录之后才会有
@@ -12,18 +12,18 @@ import top.luhancc.saas.hrm.common.model.system.User;
  * @since 1.0.0
  */
 public final class UserContext {
-    private static final InheritableThreadLocal<User> USER_THREAD_LOCAL = new InheritableThreadLocal<>();
+    private static final InheritableThreadLocal<UserToken> USER_THREAD_LOCAL = new InheritableThreadLocal<>();
 
-    public static User getCurrentUser() {
+    public static UserToken getCurrentUser() {
         return USER_THREAD_LOCAL.get();
     }
 
-    public static void setCurrentUser(User user) {
+    public static void setCurrentUser(UserToken user) {
         USER_THREAD_LOCAL.set(user);
     }
 
     public static String getUserId() {
-        User loginUser = getCurrentUser();
+        UserToken loginUser = getCurrentUser();
         if (loginUser == null) {
             throw new BaseBusinessException(ResultCode.UNAUTHENTICATED);
         }

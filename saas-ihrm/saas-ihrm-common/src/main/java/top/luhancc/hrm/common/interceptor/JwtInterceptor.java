@@ -16,6 +16,7 @@ import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.utils.JwtUtils;
 import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,15 +74,14 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
             throw new BaseBusinessException(ResultCode.RELOGIN_ERROR);
         }
         // 根据token获取其中的用户
-        Object userObj = claims.get("user");
-        User user = JSONObject.parseObject(JSONObject.toJSONString(userObj), User.class);
-        UserContext.setCurrentUser(user);
+        Object userTokenObj = claims.get("user");
+        UserToken userToken = JSONObject.parseObject(JSONObject.toJSONString(userTokenObj), UserToken.class);
+        UserContext.setCurrentUser(userToken);
 
         // 如果是saasAdmin类型的用户,不需要校验api权限
-        if (UserLevelType.SAAS_ADMIN.equals(user.getLevel())) {
+        if (UserLevelType.SAAS_ADMIN.equals(userToken.getLevel())) {
             return true;
         }
-
         // 验证api权限
         Object apiCodesObj = claims.get("apiCodes");
         Set<String> apiCodeSet = JSONObject.parseObject(JSONObject.toJSONString(apiCodesObj), HashSet.class);
@@ -95,7 +95,7 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
             name = name.replace(ENTITY_TYPE_FLAG, generic_name);
         }
         if (!apiCodes.contains(name)) {
-            log.warn("当前用户[{}]没有权限访问当前路径:{}", user.getId(), request.getRequestURI());
+            log.warn("当前用户[{}]没有权限访问当前路径:{}", userToken.getId(), request.getRequestURI());
             throw new BaseBusinessException(ResultCode.UNAUTHORISE);
         }
         return true;

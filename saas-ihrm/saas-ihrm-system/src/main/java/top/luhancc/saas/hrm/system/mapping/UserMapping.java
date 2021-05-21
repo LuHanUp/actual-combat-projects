@@ -1,6 +1,8 @@
 package top.luhancc.saas.hrm.system.mapping;
 
 import org.mapstruct.Mapper;
+import top.luhancc.saas.hrm.common.model.system.User;
+import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 
 /**
  * @author luHan
@@ -9,4 +11,5 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring")
 public interface UserMapping {
+    UserToken user2UserToken(User user);
 }

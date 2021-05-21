@@ -32,6 +32,8 @@ public interface UserService extends CRUDService<User> {
 
     /**
      * 上传用户头像，返回Data URL
+     * <p>
+     * 同时将用户头像注册进人脸识别库中
      *
      * @param userId 用户id
      * @param file   头像文件

@@ -19,3 +19,13 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:6868/eureka/
+
+# 百度云api相关配置
+baidu.face:
+  appId: 24216659
+  apiKey: t1Q3FRAZe23Q7CrV8X7w5mPZ
+  secretKey: ZGtqocvHiuidyKqh1pBSVX2HgcYmVPDo
+  imageType: BASE64
+  groupId: saasIhrmLuHan
+faceLogin:
+  qrCodeUrl: https://localhost:8080/#/facelogin # 人脸登录的url

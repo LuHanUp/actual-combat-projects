@@ -45,6 +45,8 @@ public class SystemController {
 
     /**
      * 用户登录
+     * <p>
+     * 手机号密码登录
      *
      * @param loginParam 登录参数
      * @return

@@ -10,10 +10,14 @@ import top.luhancc.saas.hrm.common.model.system.Permission;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
-import top.luhancc.saas.hrm.system.mapping.UserMapping;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
 
+/**
+ * 用户登录的Realm类
+ *
+ * @author luhan
+ */
 @Component
 @Order(1)
 public class UserRealm extends IhrmRealm {
@@ -21,8 +25,6 @@ public class UserRealm extends IhrmRealm {
     private UserService userService;
     @Autowired
     private PermissionService permissionService;
-    @Autowired
-    private UserMapping userMapping;
 
     //认证方法
     @Override

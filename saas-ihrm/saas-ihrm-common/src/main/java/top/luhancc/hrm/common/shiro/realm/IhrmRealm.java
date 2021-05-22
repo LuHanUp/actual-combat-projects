@@ -26,6 +26,7 @@ public class IhrmRealm extends AuthorizingRealm {
         //1.获取安全数据
         UserProfileResult result = (UserProfileResult) principalCollection.getPrimaryPrincipal();
         //2.获取权限信息
+        @SuppressWarnings("unchecked")
         Set<String> apisPerms = (Set<String>) result.getRoles().get("apis");
         //3.构造权限数据，返回值
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();

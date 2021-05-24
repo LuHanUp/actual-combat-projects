@@ -75,6 +75,7 @@ public class ShiroAuthorizationConfig implements WebMvcConfigurer {
         filterMap.put("/sys/city/**", "anon");
         filterMap.put("/sys/faceLogin/**", "anon");
         filterMap.put("/sys/autherror", "anon");
+        filterMap.put("/sys/permission/save/apis", "anon");
         //注册
         //authc -- 认证之后访问（登录）
         filterMap.put("/**", "authc");
@@ -143,6 +144,6 @@ public class ShiroAuthorizationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new ShiroInterceptor(redisSessionDAO())).addPathPatterns("/**")
-                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**");
+                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**", "/sys/permission/save/apis");
     }
 }

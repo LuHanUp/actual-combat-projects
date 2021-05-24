@@ -3,6 +3,8 @@ package top.luhancc.hrm.common;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
@@ -12,6 +14,7 @@ import top.luhancc.hrm.common.config.JpaConfig;
 import top.luhancc.hrm.common.config.JwtAuthorizationConfig;
 import top.luhancc.hrm.common.config.ShiroAuthorizationConfig;
 import top.luhancc.hrm.common.exception.GlobalExceptionHandler;
+import top.luhancc.hrm.common.request.ScanAllRequestUrlRunner;
 import top.luhancc.hrm.common.utils.IdWorker;
 import top.luhancc.hrm.common.utils.JwtUtils;
 
@@ -29,7 +32,9 @@ import java.lang.annotation.*;
 @SpringBootApplication
 @CrossOrigin // 解决跨域问题
 @EnableConfigurationProperties({JwtUtils.class})
-@Import({JpaConfig.class, IdWorker.class, GlobalExceptionHandler.class, CrossOriginConfig.class, JwtAuthorizationConfig.class, ShiroAuthorizationConfig.class})
+@EnableFeignClients({"top.luhancc.hrm.common.request"})
+@EnableDiscoveryClient
+@Import({JpaConfig.class, IdWorker.class, GlobalExceptionHandler.class, CrossOriginConfig.class, JwtAuthorizationConfig.class, ShiroAuthorizationConfig.class, ScanAllRequestUrlRunner.class})
 public @interface IhrmSpringBootApplication {
 
     /**

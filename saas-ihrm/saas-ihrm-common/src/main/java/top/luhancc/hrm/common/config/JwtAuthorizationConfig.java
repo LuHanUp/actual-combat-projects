@@ -30,6 +30,6 @@ public class JwtAuthorizationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtInterceptor(jwtUtils)).addPathPatterns("/**")
-                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**");
+                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**", "/sys/permission/save/apis");
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.service.CRUDService;
+import top.luhancc.saas.hrm.common.model.system.bo.UserToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +35,11 @@ public class BaseController<T, Service extends CRUDService<T>> {
     public void init(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        this.companyId = UserContext.getCurrentUser().getCompanyId();
-        this.companyName = UserContext.getCurrentUser().getCompanyName();
+        UserToken currentUser = UserContext.getCurrentUser();
+        if (currentUser != null) {
+            this.companyId = currentUser.getCompanyId();
+            this.companyName = currentUser.getCompanyName();
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, name = ENTITY_TYPE_FLAG + "_SAVE")

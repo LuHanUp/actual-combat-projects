@@ -189,4 +189,14 @@ public class PermissionServiceImpl implements PermissionService {
     public Integer count() {
         return Math.toIntExact(permissionDao.count());
     }
+
+    @Override
+    public void saveApis(List<PermissionApi> apis) {
+        for (PermissionApi api : apis) {
+            try {
+                permissionApiDao.save(api);
+            } catch (Exception e) {
+            }
+        }
+    }
 }

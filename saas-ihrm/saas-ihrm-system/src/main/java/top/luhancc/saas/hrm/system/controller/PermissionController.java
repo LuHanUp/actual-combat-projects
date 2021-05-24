@@ -2,15 +2,20 @@ package top.luhancc.saas.hrm.system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import top.luhancc.hrm.common.controller.BaseController;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.saas.hrm.common.model.PageResult;
 import top.luhancc.saas.hrm.common.model.system.Permission;
+import top.luhancc.saas.hrm.common.model.system.PermissionApi;
 import top.luhancc.saas.hrm.system.domain.param.PermissionParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
 import top.luhancc.saas.hrm.system.service.PermissionService;
+
+import java.util.List;
 
 /**
  * 权限controller
@@ -28,5 +33,11 @@ public class PermissionController extends BaseController<PermissionParam, Permis
     public Result<PageResult<Permission>> findAll(PermissionQuery permissionQuery) {
         Page<Permission> permissionPage = service.findAll(permissionQuery);
         return Result.success(new PageResult<>(permissionPage));
+    }
+
+    @RequestMapping(value = "/save/apis", method = RequestMethod.POST)
+    public Result<Void> saveApis(@RequestBody List<PermissionApi> apis) {
+        service.saveApis(apis);
+        return Result.success();
     }
 }

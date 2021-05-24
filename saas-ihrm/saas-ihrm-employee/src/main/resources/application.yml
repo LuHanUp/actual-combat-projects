@@ -19,6 +19,9 @@ spring:
     password: 123456
     hikari:
       maximum-pool-size: 2
+  redis:
+    host: 192.168.2.142
+    port: 6379
   #3.JPA
   jpa:
     database: MySQL

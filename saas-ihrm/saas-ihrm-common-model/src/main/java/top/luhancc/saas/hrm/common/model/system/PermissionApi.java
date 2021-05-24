@@ -2,6 +2,7 @@ package top.luhancc.saas.hrm.common.model.system;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @Table(name = "pe_permission_api")
 @Getter
 @Setter
+@ToString
 public class PermissionApi implements Serializable {
     private static final long serialVersionUID = -1803315043290784820L;
     /**

@@ -3,8 +3,11 @@ package top.luhancc.saas.hrm.system.service;
 import org.springframework.data.domain.Page;
 import top.luhancc.hrm.common.service.CRUDService;
 import top.luhancc.saas.hrm.common.model.system.Permission;
+import top.luhancc.saas.hrm.common.model.system.PermissionApi;
 import top.luhancc.saas.hrm.system.domain.param.PermissionParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
+
+import java.util.List;
 
 /**
  * 权限service接口
@@ -22,4 +25,6 @@ public interface PermissionService extends CRUDService<PermissionParam> {
      * @return
      */
     Integer count();
+
+    void saveApis(List<PermissionApi> apis);
 }

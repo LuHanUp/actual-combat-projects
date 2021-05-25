@@ -1,2 +1,9 @@
 authorization:
   type: shiro
+  exclude-paths:
+     /sys/login
+    , /actuator/info
+    , /sys/autherror/**
+    , /sys/faceLogin/**
+    , /error/**
+    , /sys/permission/save/apis

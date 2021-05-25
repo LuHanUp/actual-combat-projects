@@ -13,6 +13,7 @@ import top.luhancc.hrm.common.config.CrossOriginConfig;
 import top.luhancc.hrm.common.config.JpaConfig;
 import top.luhancc.hrm.common.config.JwtAuthorizationConfig;
 import top.luhancc.hrm.common.config.ShiroAuthorizationConfig;
+import top.luhancc.hrm.common.controller.UnAuthorizedController;
 import top.luhancc.hrm.common.exception.GlobalExceptionHandler;
 import top.luhancc.hrm.common.request.ScanAllRequestUrlRunner;
 import top.luhancc.hrm.common.utils.IdWorker;
@@ -34,7 +35,7 @@ import java.lang.annotation.*;
 @EnableConfigurationProperties({JwtUtils.class})
 @EnableFeignClients({"top.luhancc.hrm.common.request"})
 @EnableDiscoveryClient
-@Import({JpaConfig.class, IdWorker.class, GlobalExceptionHandler.class, CrossOriginConfig.class, JwtAuthorizationConfig.class, ShiroAuthorizationConfig.class, ScanAllRequestUrlRunner.class})
+@Import({JpaConfig.class, UnAuthorizedController.class, IdWorker.class, GlobalExceptionHandler.class, CrossOriginConfig.class, JwtAuthorizationConfig.class, ShiroAuthorizationConfig.class, ScanAllRequestUrlRunner.class})
 public @interface IhrmSpringBootApplication {
 
     /**

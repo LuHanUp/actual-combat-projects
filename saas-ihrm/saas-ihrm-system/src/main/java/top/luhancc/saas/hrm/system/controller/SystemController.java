@@ -6,11 +6,13 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import top.luhancc.hrm.common.context.UserContext;
 import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
-import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.saas.hrm.common.model.system.Permission;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
@@ -38,17 +40,6 @@ public class SystemController {
 
     @Value("${authorization.type}")
     private String authType;
-
-    @RequestMapping(value = "/autherror", method = RequestMethod.GET)
-    public Result<String> authError(@RequestParam("code") Integer code) {
-        if (1 == code) {
-            throw new BaseBusinessException(ResultCode.UNAUTHENTICATED);
-        } else if (2 == code) {
-            throw new BaseBusinessException(ResultCode.UNAUTHORISE);
-        } else {
-            return Result.success();
-        }
-    }
 
     /**
      * 用户登录

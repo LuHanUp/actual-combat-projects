@@ -21,6 +21,7 @@ import top.luhancc.hrm.common.shiro.realm.IhrmRealm;
 import top.luhancc.hrm.common.shiro.session.CustomSessionManager;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +31,13 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "authorization", name = "type", havingValue = "shiro", matchIfMissing = false)
 @Slf4j
 public class ShiroAuthorizationConfig implements WebMvcConfigurer {
+    @Value("${spring.redis.host}")
+    private String host;
+    @Value("${spring.redis.port}")
+    private int port;
+
+    @Value("${authorization.exclude-paths}")
+    private String[] excludePaths;
 
     public ShiroAuthorizationConfig() {
         log.info("使用shiro作为认证授权组件");
@@ -85,12 +93,6 @@ public class ShiroAuthorizationConfig implements WebMvcConfigurer {
         return filterFactory;
     }
 
-
-    @Value("${spring.redis.host}")
-    private String host;
-    @Value("${spring.redis.port}")
-    private int port;
-
     /**
      * 1.redis的控制器，操作redis
      */
@@ -144,6 +146,6 @@ public class ShiroAuthorizationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new ShiroInterceptor(redisSessionDAO())).addPathPatterns("/**")
-                .excludePathPatterns("/sys/login", "/actuator/info", "/sys/faceLogin/**", "/error/**", "/sys/permission/save/apis");
+                .excludePathPatterns(excludePaths);
     }
 }

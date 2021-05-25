@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import top.luhancc.hrm.common.domain.Result;
 import top.luhancc.hrm.common.domain.ResultCode;
 import top.luhancc.hrm.common.exception.BaseBusinessException;
 import top.luhancc.hrm.common.utils.IdWorker;
@@ -17,7 +18,8 @@ import top.luhancc.hrm.common.utils.QRCodeUtil;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.FaceLoginResult;
 import top.luhancc.saas.hrm.common.model.system.response.QRCode;
-import top.luhancc.saas.hrm.system.domain.param.LoginParam;
+import top.luhancc.saas.hrm.system.controller.SystemController;
+import top.luhancc.saas.hrm.system.domain.param.SocialLoginParam;
 import top.luhancc.saas.hrm.system.service.FaceLoginService;
 import top.luhancc.saas.hrm.system.service.UserService;
 import top.luhancc.saas.hrm.system.thirdservice.FaceService;
@@ -38,6 +40,7 @@ public class FaceLoginServiceImpl implements FaceLoginService {
     private String faceLoginUrl;
 
     private final IdWorker idWorker;
+    private final SystemController systemController;
     private final UserService userService;
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -87,17 +90,19 @@ public class FaceLoginServiceImpl implements FaceLoginService {
             if (StringUtils.isNotEmpty(userId)) {
                 // 模拟登录,获取token
                 User user = userService.findById(userId);
-                LoginParam loginParam = new LoginParam();
+                SocialLoginParam loginParam = new SocialLoginParam();
                 loginParam.setMobile(user.getMobile());
-                loginParam.setPassword(user.getPassword());
-                String token = userService.login(loginParam);
-                if (StringUtils.isNotEmpty(token)) {
-                    // 登录成功后,修改二维码状态
-                    faceLoginResult.setUserId(userId);
-                    faceLoginResult.setToken(token);
-                    faceLoginResult.setState(1);
-                    redisTemplate.boundValueOps(String.format(CODE_CACHE_KEY, code)).set(faceLoginResult, 1, TimeUnit.MILLISECONDS);
-                    return faceLoginResult;
+                Result<String> tokenRes = systemController.socialLogin(loginParam);
+                if (tokenRes.isSuccess()) {
+                    String token = tokenRes.getData();
+                    if (StringUtils.isNotEmpty(token)) {
+                        // 登录成功后,修改二维码状态
+                        faceLoginResult.setUserId(userId);
+                        faceLoginResult.setToken(token);
+                        faceLoginResult.setState(1);
+                        redisTemplate.boundValueOps(String.format(CODE_CACHE_KEY, code)).set(faceLoginResult, 1, TimeUnit.MILLISECONDS);
+                        return faceLoginResult;
+                    }
                 }
             }
             throw new BaseBusinessException(ResultCode.LOGIN_ERROR);

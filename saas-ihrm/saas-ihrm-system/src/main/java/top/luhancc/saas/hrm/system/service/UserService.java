@@ -6,6 +6,7 @@ import top.luhancc.hrm.common.service.CRUDService;
 import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.system.domain.param.AssignRoleParam;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
+import top.luhancc.saas.hrm.system.domain.param.SocialLoginParam;
 import top.luhancc.saas.hrm.system.domain.query.UserQuery;
 
 /**
@@ -57,4 +58,6 @@ public interface UserService extends CRUDService<User> {
      * @return
      */
     String loginByShiro(LoginParam loginParam);
+
+    String socialLogin(SocialLoginParam socialLoginParam, String authType);
 }

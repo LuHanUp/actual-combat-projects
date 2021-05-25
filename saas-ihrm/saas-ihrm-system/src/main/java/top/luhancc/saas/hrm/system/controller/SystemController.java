@@ -16,6 +16,7 @@ import top.luhancc.saas.hrm.common.model.system.User;
 import top.luhancc.saas.hrm.common.model.system.response.UserProfileResult;
 import top.luhancc.saas.hrm.common.model.system.type.UserLevelType;
 import top.luhancc.saas.hrm.system.domain.param.LoginParam;
+import top.luhancc.saas.hrm.system.domain.param.SocialLoginParam;
 import top.luhancc.saas.hrm.system.domain.query.PermissionQuery;
 import top.luhancc.saas.hrm.system.service.PermissionService;
 import top.luhancc.saas.hrm.system.service.UserService;
@@ -65,6 +66,23 @@ public class SystemController {
         } else if ("shiro".equals(authType)) {
             token = userService.loginByShiro(loginParam);
         }
+        if (StringUtils.isEmpty(token)) {
+            return Result.error(ResultCode.LOGIN_ERROR);
+        }
+        return Result.success(token);
+    }
+
+    /**
+     * 用户登录
+     * <p>
+     * 社交方式登录、刷脸登录
+     *
+     * @param socialLoginParam 登录参数
+     * @return
+     */
+    @RequestMapping(value = "/socialLogin", method = RequestMethod.POST)
+    public Result<String> socialLogin(@RequestBody SocialLoginParam socialLoginParam) {
+        String token = userService.socialLogin(socialLoginParam, authType);
         if (StringUtils.isEmpty(token)) {
             return Result.error(ResultCode.LOGIN_ERROR);
         }

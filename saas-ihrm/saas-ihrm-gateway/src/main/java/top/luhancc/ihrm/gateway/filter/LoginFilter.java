@@ -13,12 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 登录过滤器
+ * <p>
+ * 因为鉴权写在了saas-ihrm-common，随意此处的这个可以不需要了
  *
  * @author luHan
  * @create 2021/5/25 15:25
  * @since 1.0.0
  */
-@Component
+//@Component
 @Slf4j
 public class LoginFilter extends ZuulFilter {
 

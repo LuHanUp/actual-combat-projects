@@ -10,6 +10,7 @@
         <module>saas-ihrm-system</module>
         <module>saas-ihrm-eureka</module>
         <module>saas-ihrm-employee</module>
+        <module>saas-ihrm-gateway</module>
     </modules>
 
     <parent>

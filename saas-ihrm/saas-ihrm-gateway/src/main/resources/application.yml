@@ -1,0 +1,20 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: saas-ihrm-gateway
+# 配置路由规则
+zuul:
+  routes:
+    # 路由id,一般是应用的名称
+    saas-ihrm-company:
+      #      url: http://127.0.0.1:9001 # 固定的写死saas-ihrm-company服务的请求地址
+      serviceId: saas-ihrm-company # zull会自动从服务注册中心获取saas-ihrm-company服务的地址进行访问
+      path: /company/** # 需要映射的地址,如果请求是以company开头的就会转发到url对应的服务上
+      # 不删除请求前缀,默认情况下zull会删除匹配的请求前缀,比如请求http://127.0.0.1:9090/company ===>http://127.0.0.1:9001/
+      # 会删除company,设置为false不会删除前缀那么真实的请求地址是http://127.0.0.1:9001/company
+      stripPrefix: false
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka/

@@ -1,0 +1,67 @@
+PUT gulimal_product
+{
+  "mappings": {
+    "properties": {
+      "skuId": {
+        "type": "long"
+      },
+      "spuId": {
+        "type": "keyword"
+      },
+      "skuTitle": {
+        "type": "text",
+        "analyzer": "ik_smart"
+      },
+      "skuPrice": {
+        "type": "keyword"
+      },
+      "skuImg": {
+        "type": "keyword"
+      },
+      "saleCount": {
+        "type": "long"
+      },
+      "hasStock": {
+        "type": "boolean"
+      },
+      "hotScore": {
+        "type": "long"
+      },
+      "brandId": {
+        "type": "long"
+      },
+      "catalogId": {
+        "type": "long"
+      },
+      "brandName": {
+        "type": "keyword"
+      },
+      "brandImg": {
+        "type": "keyword"
+      },
+      "catalogName": {
+        "type": "keyword"
+      },
+      "attrs": {
+        "type": "nested",
+        "properties": {
+          "attrId": {
+            "type": "long"
+          },
+          "attrName": {
+            "type": "keyword"
+          },
+          "attrValue": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
+
+spuId 设计成keyword类型,方便后面使用数据折叠功能
+index:false 表示不可以使用在检索条件里 
+doc_values:false 表示不可以使用在聚合条件里
+hasStock设计成boolean类型，只有有库存的会被检索到
+"type": "nested" 表示对象类型的不会被扁平化处理，详细文档查看：https://www.elastic.co/guide/en/elasticsearch/reference/7.x/nested.html

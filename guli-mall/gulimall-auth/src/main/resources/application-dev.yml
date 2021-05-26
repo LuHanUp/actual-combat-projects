@@ -1,0 +1,25 @@
+logging:
+  level:
+    top.luhancc.gulimall.auth: info
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    cache: false
+  zipkin:
+    base-url: http://192.168.2.142:9411/ # zipkin服务器地址
+    discovery-client-enabled: false # 关闭服务发现,否则SpringCloud会把zipkin的url当做服务名注册进注册中心
+    sender:
+      type: web # 设置使用http的方式传输数据
+  sleuth:
+    sampler:
+      probability: 1 # 设置抽样采集率为100% 默认为0.1即10%
+  redis:
+    host: 192.168.2.142
+  session:
+    store-type: redis
+server:
+  port: 13000
+  servlet:
+    session:
+      timeout: 30

@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.2.142:8848
+        namespace: 19362e16-197d-4b4b-a9db-e203893a8648
+        extension-configs:
+          - data-id: search.yml
+            group: DEFAULT_GROUP
+            refresh: true
+      discovery:
+        server-addr: 192.168.2.142:8848
+  application:
+    name: gulimall-search
+server:
+  port: 12000

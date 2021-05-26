@@ -1,0 +1,64 @@
+kind: Deployment
+apiVersion: apps/vi
+metadata:
+  name: gulimall-auth
+  namespace: gulimall
+  labels:
+    app: gulimall-auth
+spec:
+  replicas: 1 # 副本数
+  selector:
+    matchLabels:
+      app: gulimall-auth
+  template:
+    metadata:
+      labels:
+        app: gulimall-auth
+    spec:
+      containers:
+        - name: gulimall-auth # 容器名称
+          image: $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:$TAG_NAME # 服务镜像地址
+          ports:
+            - containerPort: 13000 # 容器的端口
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 10Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent # 当镜像在本地不存在时再去拉取
+      restartPolicy: Always # 机器重启时进行重新启动
+      terminationGracePeriodSeconds: 30
+  strategy:
+    type: RollingUpdate # 滚动更新
+    rollingUpdate:
+      maxUnavailabel: 25%
+      maxSurge: 25% # 在更新期间允许最大存活25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+
+kind: Service
+apiversion: v1
+metadata:
+  name: gulimall-auth
+  namespace: gulimall
+  labels:
+    app: gulimall-auth
+spec:
+  ports:
+    - protocol: TCP
+      port: 13000 # 容器端口
+      targetPort: 13000 # 暴露出容器外的端口
+      nodePort: 13000 # 暴露出来的外网访问端口,必须在30000-32767之间
+  selector:
+    app: gulimall-auth
+  type: NodePort
+  sessionAffinity: None # 是不是需要保持会话
+#  externalTrafficPolicy: Cluster
+#  sessionAffinityConfig:
+#    clientIP:
+#      timeoutSeconds: 10800
+
+### 其余服务的部署文件参考这个文件即可

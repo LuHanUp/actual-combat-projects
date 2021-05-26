@@ -14,6 +14,43 @@ zuul:
       # 不删除请求前缀,默认情况下zull会删除匹配的请求前缀,比如请求http://127.0.0.1:9090/company ===>http://127.0.0.1:9001/
       # 会删除company,设置为false不会删除前缀那么真实的请求地址是http://127.0.0.1:9001/company
       stripPrefix: false
+      customSensitiveHeaders: true # true-保留请求的请求头信息
+    #薪资模块的路由
+    ihrm-salarys: #工资
+      path: /salarys/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-salarys #指定Eureka注册中心中的服务id
+      strip-prefix: false
+      customSensitiveHeaders: true
+    ihrm-system: #系统
+      path: /sys/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-system #指定Eureka注册中心中的服务id
+      stripPrefix: false
+      customSensitiveHeaders: true #对指定路由开启自定义敏感头
+    ihrm-employee: #员工
+      path: /employees/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-employee #指定Eureka注册中心中的服务id
+      stripPrefix: false
+      customSensitiveHeaders: true #对指定路由开启自定义敏感头
+    ihrm-social-securitys: #社保
+      path: /social_securitys/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-social-securitys #指定Eureka注册中心中的服务id
+      stripPrefix: false
+      customSensitiveHeaders: true #对指定路由开启自定义敏感头
+    ihrm-atte-cfg: #社保
+      path: /cfg/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-attendance #指定Eureka注册中心中的服务id
+      stripPrefix: false
+      customSensitiveHeaders: true #对指定路由开启自定义敏感头
+    ihrm-atte-attendances: #社保
+      path: /attendances/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-attendance #指定Eureka注册中心中的服务id
+      stripPrefix: false
+      customSensitiveHeaders: true #对指定路由开启自定义敏感头
+    ihrm-user-audit: #用户自助-审批
+      path: /user/** #配置请求URL的请求规则
+      serviceId: saas-ihrm-audit #指定Eureka注册中心中的服务id
+      stripPrefix: false
+      customSensitiveHeaders: true #对指定路由开启自定义敏感头
 eureka:
   client:
     service-url:

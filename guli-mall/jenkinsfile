@@ -1,0 +1,41 @@
+pipeline{
+  agent{
+    node{label:'maven'}
+  }
+  parameters{
+    string(name:'PROJECT_NAME',defaultValue:'',description:'构建的模块名称')
+    string(name:'PROJECT_VERSION',defaultValue:'',description:'构建的模块版本')
+  }
+  stages{
+    stage('拉取代码'){
+      steps{
+        git(url:'代码git地址',credentialsId:'凭证的id',branch:'拉取的分支',changelog:true,poll:false)
+      }
+    }
+    stage('编译代码'){
+      steps{
+        container('maven'){
+          sh 'mvn clean install -Dmaven.test.skip=true '
+        }
+      }
+    }
+    stage('构建镜像'){
+      steps{
+        container('maven'){
+          sh 'mvn -Dmaven.test.skip=true clean package'
+          sh 'cd $PROJECT_NAME'
+          sh 'docker build -f Dockerfile -t gulimall/$PROJECT_NAME:$PROJECT_VERSION-SNAPSHOT-$BUILD_NUMBER . '
+        }
+      }
+    }
+    stage('推送镜像'){
+      when{branch 'master'}
+      steps{
+         container('maven'){
+           sh 'docker tag gulimall/$PROJECT_NAME:$PROJECT_VERSION-SNAPSHOT-$BUILD_NUMBER gulimall/$PROJECT_NAME:$PROJECT_VERSION '
+           sh 'docker push gulimall/$PROJECT_NAME:$PROJECT_VERSION '
+         }
+      }
+    }
+  }
+}

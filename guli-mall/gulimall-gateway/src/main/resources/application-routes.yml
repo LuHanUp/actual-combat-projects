@@ -1,0 +1,63 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: baidu_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+
+        - id: gulimall-product_route # 商品服务route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: gulimall-ware_route # 库存服务route
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: gulimall-coupon_route # 营销服务route
+          uri: lb://gulimall-coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: gulimall-third-party_route # 第三方服务route
+          uri: lb://gulimall-third-party
+          predicates:
+            - Path=/api/thirdparty/**
+          filters:
+            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+
+        - id: gulimall-admin_route # 后台管理route
+          uri: lb://gulimall-admin
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/gulimall-admin/$\{segment}
+
+        - id: gulimall-host_route # gulimall域名请求
+          uri: lb://gulimall-product
+          predicates:
+            - Host=gulimall.com,item.gulimall.com # **表示任意的子域名
+
+        - id: search.gulimall-host_route # search.gulimall.com域名的路由规则
+          uri: lb://gulimall-search
+          predicates:
+            - Host=search.gulimall.com # **表示任意的子域名
+
+        - id: auth.gulimall-host_route # 认证域名请求
+          uri: lb://gulimall-auth
+          predicates:
+            - Host=auth.gulimall.com # **表示任意的子域名
+
+        - id: cart.gulimall-host_route # 购物车域名请求
+          uri: lb://gulimall-order
+          predicates:
+            - Host=cart.gulimall.com,order.gulimall.com # **表示任意的子域名

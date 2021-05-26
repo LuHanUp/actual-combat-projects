@@ -1,0 +1,12 @@
+server:
+  port: 11000
+
+spring:
+  profiles:
+    include: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.2.142:8848
+  application:
+    name: gulimall-ware

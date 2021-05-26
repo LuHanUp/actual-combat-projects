@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: gulimall-product
+  profiles:
+    include: dev
+  redis:
+    host: 192.168.2.142
+  thymeleaf:
+    cache: false
+  session:
+    store-type: redis
+server:
+  port: 10000
+
+gulimall:
+  thread:
+    coreSize: 20
+    maxSize: 200
+    keepAliveTime: 10

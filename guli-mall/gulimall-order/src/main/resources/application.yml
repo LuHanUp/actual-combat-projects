@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    include: dev
+  session:
+    store-type: redis
+  redis:
+    host: 192.168.2.142
+  rabbitmq:
+    host: 192.168.2.142
+    port: 5672
+    virtual-host: /
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+server:
+  port: 9000
+# seata的相关配置
+seata:
+  tx-service-group: ${spring.application.name}-service-group
+  service:
+    vgroup-mapping:
+      gulimall-order-service-group: default
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 192.168.2.142:8848

@@ -1,0 +1,5 @@
+elasticsearch:
+  address: 192.168.2.142:9200
+spring:
+  thymeleaf:
+    cache: false

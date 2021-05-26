@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: gulimall-auth
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.2.142:8848
+      config:
+        server-addr: 192.168.2.142:8848
+        namespace: 2d688b45-46cd-4fbf-beff-aa69d75eb965
+  profiles:
+    active: dev
+server:
+  port: 13000
+  servlet:
+    session:
+      timeout: 30

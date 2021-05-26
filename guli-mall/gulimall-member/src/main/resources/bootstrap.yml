@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: gulimall-member
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.2.142:8848
+      config:
+        server-addr: 192.168.2.142:8848
+        namespace: b28a2c31-ee74-4ba8-8a8a-5118b2f50d9c
+  profiles:
+    active: dev
+server:
+  port: 8000

@@ -1,0 +1,48 @@
+logging:
+  level:
+    top.luhancc.gulimall.coupon: info
+    top.luhancc.gulimall.coupon.dao: debug
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.2.142:3306/gulimall_sms
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.2.142:8848
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd HH:mm:ss
+  redis:
+    host: 192.168.2.142
+    port: 6379
+  zipkin:
+    base-url: http://192.168.2.142:9411/ # zipkin服务器地址
+    discovery-client-enabled: false # 关闭服务发现,否则SpringCloud会把zipkin的url当做服务名注册进注册中心
+    sender:
+      type: web # 设置使用http的方式传输数据
+  sleuth:
+    sampler:
+      probability: 1 # 设置抽样采集率为100% 默认为0.1即10%
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+management.endpoints.web.exposure.include: '*'
+feign:
+  sentinel:
+    enabled: true
+

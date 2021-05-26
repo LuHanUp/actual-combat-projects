@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+
+<div>
+    <span style="color: red"
+          th:if="${#httpServletRequest.getParameter('msg') != null && #httpServletRequest.getParameter('msg') != ''}">
+        [[${#httpServletRequest.getParameter('msg')}]]
+    </span><br>
+    用户名/手机号登录
+    <form action="/login" method="post" th:headers="'Content-Type:application/json'">
+        <input type="text" name="useracct" placeholder="请输入用户名/手机号"><br>
+        <input type="password" name="password" placeholder="请输入密码"><br>
+        <input type="submit" value="登录">
+    </form>
+    <br><br><br>
+    社交登录方式:
+    <a href="https://api.weibo.com/oauth2/authorize?client_id=2793348626&response_type=code&redirect_uri=http://auth.gulimall.com/oauth2/weibo/success">
+        <span>微博</span>
+    </a>
+</div>
+</body>
+</html>

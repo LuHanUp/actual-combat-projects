@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: gulimall-coupon
+  profiles:
+    include: dev
+  session:
+    store-type: redis
+  rabbitmq:
+    host: 192.168.2.142
+    port: 5672
+    virtual-host: /
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+server:
+  port: 7100

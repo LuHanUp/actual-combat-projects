@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>wanxin-finance</artifactId>
+        <groupId>top.luhancc.project</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>wanxin-finance-common</artifactId>
+    <description>存放整个万信金融项目的通用组件（各种业务封装类+工具类）</description>
+
+
+</project>

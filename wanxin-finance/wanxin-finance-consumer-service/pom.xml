@@ -9,15 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>wanxin-finance-common</artifactId>
-    <description>存放整个万信金融项目的通用组件（各种业务封装类+工具类）</description>
+    <artifactId>wanxin-finance-consumer-service</artifactId>
+    <description>万信金融的用户服务模块</description>
 
     <dependencies>
         <dependency>
             <groupId>top.luhancc.project</groupId>
-            <artifactId>wanxin-finance-api</artifactId>
+            <artifactId>wanxin-finance-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 
 </project>

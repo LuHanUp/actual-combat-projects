@@ -13,5 +13,12 @@
 
     <description>存放整个万信金融项目的接口和实体类的模块</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>top.luhancc.project</groupId>
+            <artifactId>wanxin-finance-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

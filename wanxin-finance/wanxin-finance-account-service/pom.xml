@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>top.luhancc.project</groupId>
-            <artifactId>wanxin-finance-common</artifactId>
+            <artifactId>wanxin-finance-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

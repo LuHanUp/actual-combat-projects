@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>wanxin-finance-consumer-service</artifactId>
-    <description>万信金融的用户服务模块</description>
+    <description>万信金融的用户中心服务模块</description>
 
     <dependencies>
         <dependency>

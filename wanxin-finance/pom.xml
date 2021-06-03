@@ -21,6 +21,7 @@
         <module>wanxin-finance-gateway</module>
         <module>wanxin-finance-consumer-service</module>
         <module>wanxin-finance-account-service</module>
+        <module>wanxin-finance-third-service</module>
     </modules>
 
     <packaging>pom</packaging>

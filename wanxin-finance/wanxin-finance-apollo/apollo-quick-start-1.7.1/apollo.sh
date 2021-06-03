@@ -197,7 +197,7 @@ elif [ "$1" = "stop" ] ; then
   ./$SERVICE_JAR_NAME stop
 
 else
-  echo "Usage: demo.sh ( commands ... )"
+  echo "Usage: apollo.sh ( commands ... )"
   echo "commands:"
   echo "  start         start services and portal"
   echo "  client        start client demo program"

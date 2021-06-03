@@ -3,9 +3,11 @@ package top.luhancc.wanxin.finance.account.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import top.luhancc.wanxin.finance.account.service.AccountService;
 import top.luhancc.wanxin.finance.api.account.AccountApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 
@@ -19,12 +21,14 @@ import top.luhancc.wanxin.finance.common.domain.RestResponse;
 @RestController
 @Api(value = "统一账户服务", tags = "Account")
 public class AccountController implements AccountApi {
+    @Autowired
+    private AccountService accountService;
 
     @ApiOperation(value = "获取手机号验证码")
     @ApiImplicitParam(name = "mobile", value = "手机号", dataTypeClass = String.class)
     @GetMapping("/sms/{mobile}")
     @Override
     public RestResponse getSMSCode(@PathVariable("mobile") String mobile) {
-        return null;
+        return accountService.getSMSCode(mobile);
     }
 }

@@ -20,4 +20,14 @@ public class SmsServiceImpl implements SmsService {
     public RestResponse getSmsCode(String mobile) {
         return OkHttpUtil.post(smsUrl + "/generate?effectiveTime=300&name=sms", "{\"mobile\":\"" + mobile + "\"}");
     }
+
+    @Override
+    public boolean verifyCode(String key, String code) {
+        RestResponse restResponse = OkHttpUtil.post(smsUrl + "/verify?name=sms&verificationKey=" + key + "&verificationCode=" + code, "");
+        if (restResponse.isSuccessful()) {
+            Object result = restResponse.getResult();
+            return Boolean.parseBoolean(result.toString());
+        }
+        return false;
+    }
 }

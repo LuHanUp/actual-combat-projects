@@ -73,7 +73,7 @@ public class RestResponse<T> {
 
     @JsonIgnore
     public Boolean isSuccessful() {
-        return this.code == 0;
+        return this.code == CommonErrorCode.SUCCESS.getCode();
     }
 
     @Override

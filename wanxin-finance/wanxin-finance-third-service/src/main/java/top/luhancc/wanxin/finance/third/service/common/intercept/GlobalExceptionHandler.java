@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import top.luhancc.wanxin.finance.third.service.common.domain.BusinessException;
-import top.luhancc.wanxin.finance.third.service.common.domain.CommonErrorCode;
-import top.luhancc.wanxin.finance.third.service.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.BusinessException;
+import top.luhancc.wanxin.finance.common.domain.CommonErrorCode;
+import top.luhancc.wanxin.finance.common.domain.RestResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

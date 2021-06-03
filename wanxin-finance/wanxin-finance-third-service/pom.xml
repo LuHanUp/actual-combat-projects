@@ -22,6 +22,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>top.luhancc.project</groupId>
+            <artifactId>wanxin-finance-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <exclusions>

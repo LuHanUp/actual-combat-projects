@@ -17,4 +17,13 @@ public interface SmsService {
      * @return
      */
     RestResponse getSmsCode(String mobile);
+
+    /**
+     * 校验验证码
+     *
+     * @param key  校验标识
+     * @param code 验证码
+     * @return
+     */
+    boolean verifyCode(String key, String code);
 }

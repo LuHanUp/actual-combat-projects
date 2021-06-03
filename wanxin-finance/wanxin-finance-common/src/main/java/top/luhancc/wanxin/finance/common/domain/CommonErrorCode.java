@@ -53,7 +53,7 @@ public enum CommonErrorCode implements ErrorCode {
     /**
      * 未知错误
      */
-    UNKOWN(999999, "未知错误");
+    UNKNOWN(999999, "未知错误");
 
 
     private int code;

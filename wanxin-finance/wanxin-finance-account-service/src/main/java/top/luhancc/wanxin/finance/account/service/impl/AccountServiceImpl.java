@@ -3,6 +3,7 @@ package top.luhancc.wanxin.finance.account.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.luhancc.wanxin.finance.account.mapper.AccountMapper;
@@ -11,6 +12,8 @@ import top.luhancc.wanxin.finance.account.service.AccountService;
 import top.luhancc.wanxin.finance.account.service.SmsService;
 import top.luhancc.wanxin.finance.common.domain.CommonErrorCode;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
  * @author luHan
@@ -37,5 +40,16 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             return RestResponse.success(count > 0 ? 1 : 0);
         }
         return RestResponse.validfail(CommonErrorCode.E_100102.getDesc());
+    }
+
+    @Override
+    public AccountDTO register(AccountRegisterDTO accountRegisterDTO) {
+        Account account = new Account();
+        BeanUtils.copyProperties(accountRegisterDTO, account);
+        account.setDomain("c");
+        this.save(account);
+        AccountDTO accountDTO = new AccountDTO();
+        BeanUtils.copyProperties(account, accountDTO);
+        return accountDTO;
     }
 }

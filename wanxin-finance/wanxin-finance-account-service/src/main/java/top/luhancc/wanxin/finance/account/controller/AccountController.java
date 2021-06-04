@@ -5,12 +5,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.luhancc.wanxin.finance.account.service.AccountService;
 import top.luhancc.wanxin.finance.api.account.AccountApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
  * 账户服务controller
@@ -45,6 +45,16 @@ public class AccountController implements AccountApi {
                                              @PathVariable("key") String key,
                                              @PathVariable("code") String code) {
         return accountService.checkMobile(mobile, key, code);
+    }
+
+    @ApiOperation(value = "用户注册")
+    @ApiImplicitParam(name = "accountRegisterDTO", value = "账户注册信息", required = true,
+            dataTypeClass = AccountRegisterDTO.class, paramType = "body")
+    @PostMapping("/register")
+    @Override
+    public RestResponse<AccountDTO> register(@RequestBody AccountRegisterDTO accountRegisterDTO) {
+        AccountDTO accountDTO = accountService.register(accountRegisterDTO);
+        return RestResponse.success(accountDTO);
     }
 
 }

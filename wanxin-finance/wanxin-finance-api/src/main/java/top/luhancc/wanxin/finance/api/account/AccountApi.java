@@ -1,6 +1,8 @@
 package top.luhancc.wanxin.finance.api.account;
 
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
  * 统一账户api接口
@@ -29,4 +31,12 @@ public interface AccountApi {
      * @return
      */
     RestResponse<Integer> checkMobile(String mobile, String key, String code);
+
+    /**
+     * 用户注册
+     *
+     * @param accountRegisterDTO
+     * @return
+     */
+    RestResponse<AccountDTO> register(AccountRegisterDTO accountRegisterDTO);
 }

@@ -1,6 +1,6 @@
 # -Denv=dev -Dapollo.cluster=DEFAULT -Dserver.port=53050
 app:
-  id: wanxin-finance-account-service
+  id: wanxin-finance-consumer-service
 apollo:
   bootstrap:
     enabled: true
@@ -8,7 +8,7 @@ apollo:
 
 spring:
   application:
-    name: wanxin-finance-account-service
+    name: ${app.id}
 
 logging:
   config: classpath:log4j2-dev.xml

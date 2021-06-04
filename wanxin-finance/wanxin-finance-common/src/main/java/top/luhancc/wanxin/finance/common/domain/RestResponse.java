@@ -39,7 +39,7 @@ public class RestResponse<T> {
     }
 
     public RestResponse() {
-        this(0, "");
+        this(CommonErrorCode.SUCCESS.getCode(), "");
     }
 
     public RestResponse(int code, String msg) {

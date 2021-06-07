@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.luhancc.wanxin.finance.account.mapper.entity.Account;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountLoginDTO;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
@@ -38,4 +39,12 @@ public interface AccountService extends IService<Account> {
      * @return
      */
     AccountDTO register(AccountRegisterDTO accountRegisterDTO);
+
+    /**
+     * 用户登录
+     *
+     * @param accountLoginDTO
+     * @return
+     */
+    AccountDTO login(AccountLoginDTO accountLoginDTO);
 }

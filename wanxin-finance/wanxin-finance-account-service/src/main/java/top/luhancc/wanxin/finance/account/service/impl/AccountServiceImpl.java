@@ -6,13 +6,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.luhancc.wanxin.finance.account.domain.AccountErrorCode;
 import top.luhancc.wanxin.finance.account.mapper.AccountMapper;
 import top.luhancc.wanxin.finance.account.mapper.entity.Account;
 import top.luhancc.wanxin.finance.account.service.AccountService;
 import top.luhancc.wanxin.finance.account.service.SmsService;
+import top.luhancc.wanxin.finance.common.domain.BusinessException;
 import top.luhancc.wanxin.finance.common.domain.CommonErrorCode;
+import top.luhancc.wanxin.finance.common.domain.ErrorCode;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountLoginDTO;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
@@ -48,6 +52,24 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         BeanUtils.copyProperties(accountRegisterDTO, account);
         account.setDomain("c");
         this.save(account);
+        AccountDTO accountDTO = new AccountDTO();
+        BeanUtils.copyProperties(account, accountDTO);
+        return accountDTO;
+    }
+
+    @Override
+    public AccountDTO login(AccountLoginDTO accountLoginDTO) {
+        LambdaQueryWrapper<Account> queryWrapper = Wrappers.lambdaQuery(Account.class);
+        if ("C".equalsIgnoreCase(accountLoginDTO.getDomain())) {
+            queryWrapper.eq(Account::getMobile, accountLoginDTO.getMobile());
+        } else {
+            queryWrapper.eq(Account::getUsername, accountLoginDTO.getUsername());
+        }
+        queryWrapper.eq(Account::getPassword, accountLoginDTO.getPassword());
+        Account account = this.getOne(queryWrapper);
+        if (account == null) {
+            throw new BusinessException(AccountErrorCode.E_130105);
+        }
         AccountDTO accountDTO = new AccountDTO();
         BeanUtils.copyProperties(account, accountDTO);
         return accountDTO;

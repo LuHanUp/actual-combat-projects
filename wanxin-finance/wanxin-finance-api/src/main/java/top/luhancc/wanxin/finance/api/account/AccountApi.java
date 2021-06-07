@@ -2,6 +2,7 @@ package top.luhancc.wanxin.finance.api.account;
 
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountLoginDTO;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
@@ -39,4 +40,12 @@ public interface AccountApi {
      * @return
      */
     RestResponse<AccountDTO> register(AccountRegisterDTO accountRegisterDTO);
+
+    /**
+     * 用户登录
+     *
+     * @param accountLoginDTO 登录参数
+     * @return
+     */
+    RestResponse<AccountDTO> login(AccountLoginDTO accountLoginDTO);
 }

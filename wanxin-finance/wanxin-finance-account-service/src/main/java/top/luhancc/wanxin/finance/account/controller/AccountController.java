@@ -10,6 +10,7 @@ import top.luhancc.wanxin.finance.account.service.AccountService;
 import top.luhancc.wanxin.finance.api.account.AccountApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
+import top.luhancc.wanxin.finance.common.domain.model.account.AccountLoginDTO;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 
 /**
@@ -54,6 +55,16 @@ public class AccountController implements AccountApi {
     @Override
     public RestResponse<AccountDTO> register(@RequestBody AccountRegisterDTO accountRegisterDTO) {
         AccountDTO accountDTO = accountService.register(accountRegisterDTO);
+        return RestResponse.success(accountDTO);
+    }
+
+    @ApiOperation(value = "用户登录")
+    @ApiImplicitParam(name = "accountLoginDTO", value = "用户登录信息", required = true,
+            dataTypeClass = AccountLoginDTO.class, paramType = "body")
+    @PostMapping("/login")
+    @Override
+    public RestResponse<AccountDTO> login(@RequestBody AccountLoginDTO accountLoginDTO) {
+        AccountDTO accountDTO = accountService.login(accountLoginDTO);
         return RestResponse.success(accountDTO);
     }
 

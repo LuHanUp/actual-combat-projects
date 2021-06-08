@@ -178,40 +178,40 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
-    public String login(LoginParam loginParam) {
-        User user = this.findByMobile(loginParam.getMobile());
-        String password = loginParam.getPassword();
-        password = new Md5Hash(password, loginParam.getMobile(), 3).toString();
-        if (user == null || !user.getPassword().equals(password)) {
-            return null;
-        }
-        UserToken userToken = userMapping.user2UserToken(user);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("companyId", user.getCompanyId());
-        map.put("companyName", user.getCompanyName());
-        map.put("user", userToken);
+    public String login(LoginParam loginParam, String authType) {
+        if ("jwt".equals(authType) || StringUtils.isEmpty(authType)) {
+            User user = this.findByMobile(loginParam.getMobile());
+            String password = loginParam.getPassword();
+            password = new Md5Hash(password, loginParam.getMobile(), 3).toString();
+            if (user == null || !user.getPassword().equals(password)) {
+                return null;
+            }
+            UserToken userToken = userMapping.user2UserToken(user);
+            Map<String, Object> map = new HashMap<>(2);
+            map.put("companyId", user.getCompanyId());
+            map.put("companyName", user.getCompanyName());
+            map.put("user", userToken);
 
-        // 获取到当前用户可以访问的所有api权限
-        Set<String> apiCodes = new HashSet<>();
-        for (Role role : user.getRoles()) {
-            Set<Permission> permissions = role.getPermissions();
-            apiCodes.addAll(permissions.stream()
-                    .filter(permission -> permission.getType() == PermissionType.API)
-                    .map(Permission::getCode)
-                    .collect(Collectors.toSet()));
+            // 获取到当前用户可以访问的所有api权限
+            Set<String> apiCodes = new HashSet<>();
+            for (Role role : user.getRoles()) {
+                Set<Permission> permissions = role.getPermissions();
+                apiCodes.addAll(permissions.stream()
+                        .filter(permission -> permission.getType() == PermissionType.API)
+                        .map(Permission::getCode)
+                        .collect(Collectors.toSet()));
+            }
+            map.put("apiCodes", apiCodes);
+            return jwtUtils.createJwt(user.getId(), user.getUsername(), map);
+        } else if ("shiro".equals(authType)) {
+            String password = loginParam.getPassword();
+            password = new Md5Hash(password, loginParam.getMobile(), 3).toString();
+            UsernamePasswordToken upToken = new UsernamePasswordToken(loginParam.getMobile(), password);
+            Subject subject = SecurityUtils.getSubject();
+            subject.login(upToken);
+            return subject.getSession().getId().toString();
         }
-        map.put("apiCodes", apiCodes);
-        return jwtUtils.createJwt(user.getId(), user.getUsername(), map);
-    }
-
-    @Override
-    public String loginByShiro(LoginParam loginParam) {
-        String password = loginParam.getPassword();
-        password = new Md5Hash(password, loginParam.getMobile(), 3).toString();
-        UsernamePasswordToken upToken = new UsernamePasswordToken(loginParam.getMobile(), password);
-        Subject subject = SecurityUtils.getSubject();
-        subject.login(upToken);
-        return subject.getSession().getId().toString();
+        return null;
     }
 
     @Override

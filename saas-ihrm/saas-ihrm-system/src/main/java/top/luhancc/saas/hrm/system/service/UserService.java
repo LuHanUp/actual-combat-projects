@@ -44,20 +44,20 @@ public interface UserService extends CRUDService<User> {
     String uploadStaffPhoto(String userId, MultipartFile file);
 
     /**
-     * jwt方式的手机号、密码登录
+     * 手机号、密码登录
      *
      * @param loginParam 登录参数
+     * @param authType
      * @return
      */
-    String login(LoginParam loginParam);
+    String login(LoginParam loginParam, String authType);
 
     /**
-     * shiro方式手机号、密码登录
+     * 社交方式登录
      *
-     * @param loginParam 登录参数
+     * @param socialLoginParam 登录参数
+     * @param authType         认证类型
      * @return
      */
-    String loginByShiro(LoginParam loginParam);
-
     String socialLogin(SocialLoginParam socialLoginParam, String authType);
 }

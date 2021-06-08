@@ -26,6 +26,8 @@ import java.util.Map;
 
 /**
  * shiro认证授权的配置类
+ *
+ * @author luhan
  */
 @Configuration
 @ConditionalOnProperty(prefix = "authorization", name = "type", havingValue = "shiro", matchIfMissing = false)

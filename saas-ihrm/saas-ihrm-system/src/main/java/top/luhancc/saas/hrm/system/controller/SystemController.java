@@ -51,12 +51,7 @@ public class SystemController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Result<String> login(@RequestBody LoginParam loginParam) {
-        String token = null;
-        if ("jwt".equals(authType) || StringUtils.isEmpty(authType)) {
-            token = userService.login(loginParam);
-        } else if ("shiro".equals(authType)) {
-            token = userService.loginByShiro(loginParam);
-        }
+        String token = userService.login(loginParam, authType);
         if (StringUtils.isEmpty(token)) {
             return Result.error(ResultCode.LOGIN_ERROR);
         }

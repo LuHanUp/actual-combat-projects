@@ -1,0 +1,17 @@
+package top.luhancc.wanxin.finance.gateway.util;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import top.luhancc.wanxin.finance.common.domain.RestResponse;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class HttpUtil {
+
+    public static void writerError(RestResponse restResponse, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json,charset=utf-8");
+        response.setStatus(restResponse.getCode());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(response.getOutputStream(), restResponse);
+    }
+}

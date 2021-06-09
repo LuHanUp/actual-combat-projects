@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 
 
+/**
+ * @author luhan
+ */
 public class UnifiedUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 3957586021470480642L;

@@ -1,8 +1,8 @@
 package top.luhancc.wanxin.finance.uaa.config;
 
 
-import top.luhancc.wanxin.finance.uaa.domain.IntegrationUserDetailsAuthenticationHandler;
-import top.luhancc.wanxin.finance.uaa.domain.IntegrationUserDetailsAuthenticationProvider;
+import top.luhancc.wanxin.finance.uaa.auth.IntegrationUserDetailsAuthenticationHandler;
+import top.luhancc.wanxin.finance.uaa.auth.IntegrationUserDetailsAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,14 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public IntegrationUserDetailsAuthenticationHandler integrationUserDetailsAuthenticationHandler(){
-		IntegrationUserDetailsAuthenticationHandler authenticationHandler = new IntegrationUserDetailsAuthenticationHandler();
-		return authenticationHandler;
+		return new IntegrationUserDetailsAuthenticationHandler();
 	}
 
 	@Bean
 	public IntegrationUserDetailsAuthenticationProvider integrationUserDetailsAuthenticationProvider(){
-		IntegrationUserDetailsAuthenticationProvider provider = new IntegrationUserDetailsAuthenticationProvider(integrationUserDetailsAuthenticationHandler());
-		return provider;
+		return new IntegrationUserDetailsAuthenticationProvider(integrationUserDetailsAuthenticationHandler());
 	}
 
 	@Autowired

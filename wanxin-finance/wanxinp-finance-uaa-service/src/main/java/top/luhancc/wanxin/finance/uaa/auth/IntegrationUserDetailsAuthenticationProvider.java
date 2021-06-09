@@ -1,4 +1,4 @@
-package top.luhancc.wanxin.finance.uaa.domain;
+package top.luhancc.wanxin.finance.uaa.auth;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -7,20 +7,25 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import top.luhancc.wanxin.finance.uaa.auth.IntegrationUserDetailsAuthenticationHandler;
+import top.luhancc.wanxin.finance.uaa.domain.IntegrationWebAuthenticationDetails;
 
 import java.util.Map;
 
 /**
  * 统一用户认证处理，集成了网页(简化模式、授权码模式用户登录)认证  与  password模式认证
+ *
+ * @author luhan
  */
 public class IntegrationUserDetailsAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private IntegrationUserDetailsAuthenticationHandler authenticationHandler  = null;
+    private IntegrationUserDetailsAuthenticationHandler authenticationHandler = null;
 
     public IntegrationUserDetailsAuthenticationProvider(IntegrationUserDetailsAuthenticationHandler authenticationHandler) {
         this.authenticationHandler = authenticationHandler;
     }
 
+    @Override
     @SuppressWarnings("deprecation")
     protected void additionalAuthenticationChecks(UserDetails userDetails,
                                                   UsernamePasswordAuthenticationToken authentication)
@@ -29,6 +34,7 @@ public class IntegrationUserDetailsAuthenticationProvider extends AbstractUserDe
     }
 
 
+    @Override
     protected final UserDetails retrieveUser(String username,
                                              UsernamePasswordAuthenticationToken authentication)
             throws AuthenticationException {
@@ -40,13 +46,9 @@ public class IntegrationUserDetailsAuthenticationProvider extends AbstractUserDe
                         "UserDetailsService returned null, which is an interface contract violation");
             }
             return loadedUser;
-        } catch (UsernameNotFoundException ex) {
+        } catch (UsernameNotFoundException | InternalAuthenticationServiceException ex) {
             throw ex;
-        }
-        catch (InternalAuthenticationServiceException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex);
         }
     }
@@ -56,29 +58,27 @@ public class IntegrationUserDetailsAuthenticationProvider extends AbstractUserDe
         Object details = authentication.getDetails();
         String domain = null;
         String authenticationType = null;
-        if(details instanceof IntegrationWebAuthenticationDetails){ //网页(简化模式、授权码模式用户登录)认证
-            IntegrationWebAuthenticationDetails webAuthenticationDetails = (IntegrationWebAuthenticationDetails)details;
+        if (details instanceof IntegrationWebAuthenticationDetails) { //网页(简化模式、授权码模式用户登录)认证
+            IntegrationWebAuthenticationDetails webAuthenticationDetails = (IntegrationWebAuthenticationDetails) details;
             domain = webAuthenticationDetails.getDomain();
             authenticationType = webAuthenticationDetails.getAuthenticationType();
-        }else if(details instanceof Map){ //password模式认证
-            Map<String ,String> webAuthenticationDetails = (Map)details;
+        } else if (details instanceof Map) { //password模式认证
+            Map<String, String> webAuthenticationDetails = (Map) details;
             domain = webAuthenticationDetails.get("domain");
             authenticationType = webAuthenticationDetails.get("authenticationType");
-        }else{ //超出预估的情况
+        } else { //超出预估的情况
             throw new InternalAuthenticationServiceException(
                     "WebAuthenticationDetails type is not support");
         }
 
-        if(StringUtils.isBlank(domain) ){
-            throw new InternalAuthenticationServiceException(
-                    "domain is blank");
+        if (StringUtils.isBlank(domain)) {
+            throw new InternalAuthenticationServiceException("domain is blank");
         }
 
-        if(StringUtils.isBlank(authenticationType)){
-            throw new InternalAuthenticationServiceException(
-                    "authenticationType is blank");
+        if (StringUtils.isBlank(authenticationType)) {
+            throw new InternalAuthenticationServiceException("authenticationType is blank");
         }
-        return authenticationHandler.authentication(domain, authenticationType ,authentication);
+        return authenticationHandler.authentication(domain, authenticationType, authentication);
     }
 
 }

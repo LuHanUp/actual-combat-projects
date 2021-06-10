@@ -3,6 +3,8 @@ package top.luhancc.wanxin.finance.account.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hmily.annotation.Hmily;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO
  * @since 1.0.0
  */
 @Service
+@Slf4j
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountService {
     @Autowired
     private SmsService smsService;
@@ -46,6 +49,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
+    @Hmily(confirmMethod = "registerConfirm", cancelMethod = "registerCancel")
     public AccountDTO register(AccountRegisterDTO accountRegisterDTO) {
         Account account = new Account();
         BeanUtils.copyProperties(accountRegisterDTO, account);
@@ -54,6 +58,17 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         AccountDTO accountDTO = new AccountDTO();
         BeanUtils.copyProperties(account, accountDTO);
         return accountDTO;
+    }
+
+    public void confirmRegister(AccountRegisterDTO registerDTO) {
+        log.info("execute confirmRegister");
+    }
+
+    public void cancelRegister(AccountRegisterDTO registerDTO) {
+        log.info("execute cancelRegister");
+        //删除账号
+        remove(Wrappers.<Account>lambdaQuery().eq(Account::getUsername,
+                registerDTO.getUsername()));
     }
 
     @Override

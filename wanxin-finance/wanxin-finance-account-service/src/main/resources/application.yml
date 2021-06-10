@@ -4,7 +4,7 @@ app:
 apollo:
   bootstrap:
     enabled: true
-    namespaces: application,micro_service.spring-boot-http,micro_service.spring-eureka,micro_service.spring-boot-mysql,micro_service.spring-boot-druid,micro_service.mybatis-plus
+    namespaces: application,micro_service.spring-boot-http,micro_service.spring-eureka,micro_service.spring-boot-mysql,micro_service.spring-boot-druid,micro_service.mybatis-plus,micro_service.spring-cloud-hmily
 
 spring:
   application:

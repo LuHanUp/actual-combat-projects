@@ -1,5 +1,6 @@
 package top.luhancc.wanxin.finance.consumer.feign.account;
 
+import org.dromara.hmily.annotation.Hmily;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,5 +23,6 @@ public interface AccountFeign {
      * @return
      */
     @PostMapping("/register")
+    @Hmily
     RestResponse<AccountDTO> register(@RequestBody AccountRegisterDTO accountRegisterDTO);
 }

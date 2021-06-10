@@ -3,9 +3,12 @@ package top.luhancc.wanxin.finance.consumer.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.hmily.annotation.Hmily;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.luhancc.wanxin.finance.common.domain.BusinessException;
 import top.luhancc.wanxin.finance.common.domain.CodePrefixCode;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
@@ -26,11 +29,14 @@ import top.luhancc.wanxin.finance.consumer.service.ConsumerService;
  * @since 1.0.0
  */
 @Service
+@Slf4j
 public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> implements ConsumerService {
     @Autowired
     private AccountFeign accountFeign;
 
     @Override
+    @Hmily(confirmMethod = "registerConfirm", cancelMethod = "registerCancel")
+    @Transactional
     public ConsumerDTO register(ConsumerRegisterDTO consumerRegisterDTO) {
         checkMobile(consumerRegisterDTO.getMobile());
 
@@ -54,6 +60,16 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
         ConsumerDTO consumerDTO = new ConsumerDTO();
         BeanUtils.copyProperties(consumer, consumerDTO);
         return consumerDTO;
+    }
+
+    public void registerConfirm(ConsumerRegisterDTO consumerRegisterDTO) {
+        log.info("execute registerConfirm");
+    }
+
+    public void registerCancel(ConsumerRegisterDTO consumerRegisterDTO) {
+        log.info("execute registerCancel");
+        remove(Wrappers.<Consumer>lambdaQuery().eq(Consumer::getMobile,
+                consumerRegisterDTO.getMobile()));
     }
 
     private void checkMobile(String mobile) {

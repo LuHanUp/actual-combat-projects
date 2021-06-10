@@ -10,7 +10,10 @@ import top.luhancc.wanxin.finance.api.consumer.ConsumerApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.consumer.service.ConsumerService;
+import top.luhancc.wanxin.finance.consumer.util.SecurityUtil;
 
 /**
  * @author luHan
@@ -30,5 +33,16 @@ public class ConsumerController implements ConsumerApi {
     public RestResponse<ConsumerDTO> register(@RequestBody ConsumerRegisterDTO consumerRegisterDTO) {
         ConsumerDTO consumerDTO = consumerService.register(consumerRegisterDTO);
         return RestResponse.success(consumerDTO);
+    }
+
+    @ApiOperation(value = "生成开户请求数据", httpMethod = "post")
+    @ApiImplicitParam(name = "consumerRequest", value = "开户信息",
+            paramType = "body", dataTypeClass = ConsumerRequest.class)
+    @PostMapping("/createOpenAccountParam")
+    @Override
+    public RestResponse<GatewayRequest> createOpenAccountParam(@RequestBody ConsumerRequest consumerRequest) {
+        consumerRequest.setMobile(SecurityUtil.getUser().getMobile());
+        GatewayRequest gatewayRequest = consumerService.createOpenAccountParam(consumerRequest);
+        return RestResponse.success(gatewayRequest);
     }
 }

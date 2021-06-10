@@ -17,6 +17,7 @@ public class ConfigService {
 
     /**
      * 银行存管系统服务地址
+     *
      * @return
      */
     public String getDepositoryUrl() {
@@ -25,6 +26,7 @@ public class ConfigService {
 
     /**
      * 银行存管系统公钥
+     *
      * @return
      */
     public String getDepositoryPublicKey() {
@@ -33,6 +35,7 @@ public class ConfigService {
 
     /**
      * 万信P2P系统公钥
+     *
      * @return
      */
     public String getP2pPublicKey() {
@@ -41,6 +44,7 @@ public class ConfigService {
 
     /**
      * 万信P2P系统 标识
+     *
      * @return
      */
     public String getP2pCode() {
@@ -49,6 +53,7 @@ public class ConfigService {
 
     /**
      * 万信P2P系统私钥
+     *
      * @return
      */
     public String getP2pPrivateKey() {

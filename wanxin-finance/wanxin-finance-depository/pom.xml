@@ -8,6 +8,7 @@
     <artifactId>wanxin-finance-depository</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <description>万信银行存管系统，模拟的</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -22,4 +22,13 @@ public interface DepositoryRecordService extends IService<DepositoryRecord> {
      * @return
      */
     GatewayRequest createOpenAccountParam(ConsumerRequest consumerRequest);
+
+    /**
+     * 修改请求的状态
+     *
+     * @param requestNo 请求编号
+     * @param status    状态
+     * @return
+     */
+    boolean modifyRequestStatus(String requestNo, Integer status);
 }

@@ -1,6 +1,8 @@
 package top.luhancc.wanxin.finance.depository.agent.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,13 +39,22 @@ public class DepositoryRecordServiceImpl extends ServiceImpl<DepositoryRecordMap
         String jsonString = JSON.toJSONString(consumerRequest);
         String sign = RSAUtil.sign(jsonString, configService.getP2pPrivateKey(), "UTF-8");
         GatewayRequest gatewayRequest = new GatewayRequest();
-        gatewayRequest.setServiceName("PERSONAL_PEGISTER");
+        gatewayRequest.setServiceName("PERSONAL_REGISTER");
         gatewayRequest.setPlatformNo(configService.getP2pCode());
         gatewayRequest.setReqData(EncryptUtil.encodeURL(EncryptUtil.encodeUTF8StringBase64(jsonString)));
         gatewayRequest.setSignature(EncryptUtil.encodeURL(sign));
         gatewayRequest.setDepositoryUrl(configService.getDepositoryUrl() + "/gateway");
 
         return gatewayRequest;
+    }
+
+    @Override
+    public boolean modifyRequestStatus(String requestNo, Integer status) {
+        LambdaUpdateWrapper<DepositoryRecord> updateWrapper = Wrappers.<DepositoryRecord>lambdaUpdate()
+                .eq(DepositoryRecord::getRequestNo, requestNo)
+                .set(DepositoryRecord::getConfirmDate, LocalDateTime.now())
+                .set(DepositoryRecord::getRequestStatus, status);
+        return this.update(updateWrapper);
     }
 
     private DepositoryRecord getByConsumerRequest(ConsumerRequest consumerRequest) {

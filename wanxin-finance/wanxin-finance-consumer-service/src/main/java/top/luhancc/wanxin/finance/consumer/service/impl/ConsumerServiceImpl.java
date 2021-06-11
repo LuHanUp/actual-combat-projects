@@ -21,6 +21,8 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryConsumerResponse;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryReturnCode;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.consumer.domain.ConsumerErrorCode;
 import top.luhancc.wanxin.finance.consumer.feign.account.AccountFeign;
@@ -99,6 +101,11 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
         return this.getOne(queryWrapper);
     }
 
+    private Consumer getByRequestNo(String requestNo) {
+        LambdaQueryWrapper<Consumer> queryWrapper = Wrappers.lambdaQuery(Consumer.class).eq(Consumer::getRequestNo, requestNo);
+        return this.getOne(queryWrapper);
+    }
+
     private void checkMobile(String mobile) {
         LambdaQueryWrapper<Consumer> queryWrapper = Wrappers.lambdaQuery(Consumer.class).eq(Consumer::getMobile, mobile);
         int count = this.count(queryWrapper);
@@ -158,5 +165,27 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
             return restResponse.getResult();
         }
         throw new BusinessException(ConsumerErrorCode.E_140121);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean modifyResult(DepositoryConsumerResponse response) {
+        StatusCode statusCode = DepositoryReturnCode.RETURN_CODE_00000.getCode().equals(response.getRespCode()) ? StatusCode.STATUS_IN : StatusCode.STATUS_FAIL;
+        Consumer consumer = getByRequestNo(response.getRequestNo());
+        if (consumer != null) {
+            // 更新用户的绑定银行卡状态
+            LambdaUpdateWrapper<Consumer> updateWrapper = Wrappers.<Consumer>lambdaUpdate()
+                    .eq(Consumer::getRequestNo, response.getRequestNo())
+                    .set(Consumer::getIsBindCard, statusCode.getCode())
+                    .set(Consumer::getStatus, statusCode.getCode());
+            this.update(updateWrapper);
+            // 更新银行卡信息
+            return bankCardService.update(Wrappers.<BankCard>lambdaUpdate()
+                    .eq(BankCard::getConsumerId, consumer.getId())
+                    .set(BankCard::getStatus, statusCode.getCode())
+                    .set(BankCard::getBankCode, response.getBankCode())
+                    .set(BankCard::getBankName, response.getBankName()));
+        }
+        return false;
     }
 }

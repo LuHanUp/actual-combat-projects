@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>wanxinp2p-depository-agent-service</artifactId>
+    <artifactId>wanxin-finance-depository-agent-service</artifactId>
 
-    <description>存管代理服务</description>
+    <description>银行存管代理服务</description>
 
     <dependencies>
         <dependency>

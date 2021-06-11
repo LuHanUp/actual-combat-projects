@@ -27,17 +27,13 @@ import java.util.List;
  */
 @Component
 public class GatewayNotifyConsumer {
-    @Value("${rocketmq.consumer.group}")
-    private String consumerGroup;
-    @Value("${rocketmq.name-server}")
-    private String namesServerAddr;
-
     @Autowired
     private ConsumerService consumerService;
 
     private String topic = "TP_GATEWAY_NOTIFY_AGENT";
 
-    public GatewayNotifyConsumer() {
+    public GatewayNotifyConsumer(@Value("${rocketmq.consumer.group}") String consumerGroup,
+                                 @Value("${rocketmq.name-server}") String namesServerAddr) {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer(consumerGroup);
         defaultMQPushConsumer.setNamesrvAddr(namesServerAddr);
         // 从最后一个开始消费

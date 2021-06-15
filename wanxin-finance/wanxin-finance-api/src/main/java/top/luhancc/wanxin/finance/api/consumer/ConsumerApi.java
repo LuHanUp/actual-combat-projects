@@ -30,4 +30,11 @@ public interface ConsumerApi {
      * @return
      */
     RestResponse<GatewayRequest> createOpenAccountParam(ConsumerRequest consumerRequest);
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return
+     */
+    RestResponse<ConsumerDTO> getCurrConsumer();
 }

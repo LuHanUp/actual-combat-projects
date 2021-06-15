@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"top.luhancc.wanxin.finance.transcation.feign"})
+@EnableFeignClients(basePackages = {"top.luhancc.wanxin.finance.transaction.feign"})
 public class WanXinFinanceTransactionApplication {
 
 

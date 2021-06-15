@@ -32,4 +32,6 @@ public interface ConsumerService extends IService<Consumer> {
     GatewayRequest createOpenAccountParam(ConsumerRequest consumerRequest);
 
     boolean modifyResult(DepositoryConsumerResponse response);
+
+    Consumer getByMobile(String mobile);
 }

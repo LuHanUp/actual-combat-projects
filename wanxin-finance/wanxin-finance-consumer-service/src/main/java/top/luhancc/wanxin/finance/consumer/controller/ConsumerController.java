@@ -2,6 +2,7 @@ package top.luhancc.wanxin.finance.consumer.controller;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
+import top.luhancc.wanxin.finance.consumer.mapper.entity.Consumer;
 import top.luhancc.wanxin.finance.consumer.service.ConsumerService;
 import top.luhancc.wanxin.finance.consumer.util.SecurityUtil;
 
@@ -45,5 +47,15 @@ public class ConsumerController implements ConsumerApi {
         consumerRequest.setMobile(SecurityUtil.getUser().getMobile());
         GatewayRequest gatewayRequest = consumerService.createOpenAccountParam(consumerRequest);
         return RestResponse.success(gatewayRequest);
+    }
+
+    @ApiOperation(value = "获取当前登录用户信息", httpMethod = "POST")
+    @PostMapping("/l/getCurrConsumer")
+    @Override
+    public RestResponse<ConsumerDTO> getCurrConsumer() {
+        Consumer consumer = consumerService.getByMobile(SecurityUtil.getUser().getMobile());
+        ConsumerDTO consumerDTO = new ConsumerDTO();
+        BeanUtils.copyProperties(consumer, consumerDTO);
+        return RestResponse.success(consumerDTO);
     }
 }

@@ -1,7 +1,9 @@
 package top.luhancc.wanxin.finance.api.transaction;
 
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
 
 /**
  * @author luHan
@@ -17,4 +19,18 @@ public interface TransactionApi {
      * @return
      */
     RestResponse<ProjectDTO> issueTag(ProjectDTO projectDTO);
+
+    /**
+     * 检索标的信息
+     *
+     * @param projectQueryDTO 封装查询条件
+     * @param order
+     * @param pageNo
+     * @param pageSize
+     * @param sortBy
+     * @return
+     */
+    RestResponse<PageVO<ProjectDTO>> queryProjects(ProjectQueryDTO projectQueryDTO,
+                                                   String order, Integer pageNo,
+                                                   Integer pageSize, String sortBy);
 }

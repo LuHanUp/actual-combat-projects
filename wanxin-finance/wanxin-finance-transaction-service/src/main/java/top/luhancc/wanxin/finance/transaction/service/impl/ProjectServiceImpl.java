@@ -2,10 +2,12 @@ package top.luhancc.wanxin.finance.transaction.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,9 @@ import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDT
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.transaction.common.constant.ProjectCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.RepaymentWayCode;
+import top.luhancc.wanxin.finance.transaction.common.constant.TransactionErrorCode;
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
+import top.luhancc.wanxin.finance.transaction.feign.DepositoryAgentFeign;
 import top.luhancc.wanxin.finance.transaction.mapper.ProjectMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
 import top.luhancc.wanxin.finance.transaction.service.ConfigService;
@@ -42,6 +46,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private ConsumerFeign consumerFeign;
     @Autowired
     private ConfigService configService;
+    @Autowired
+    private DepositoryAgentFeign depositoryAgentFeign;
 
     @Override
     public ProjectDTO issueTag(ProjectDTO projectDTO) {
@@ -117,5 +123,33 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }).collect(Collectors.toList());
 
         return new PageVO<>(content, iPage.getTotal(), pageNo, pageSize);
+    }
+
+    @Override
+    public String projectsApprovalStatus(Long id, String approveStatus) {
+        Project project = this.getById(id);
+        ProjectDTO projectDTO = convertProjectEntityToDTO(project);
+        // 生成请求流水号
+        projectDTO.setRequestNo(CodeNoUtil.getNo(CodePrefixCode.CODE_REQUEST_PREFIX));
+
+        // 调用存管代理服务同步标的信息
+        RestResponse<String> restResponse = depositoryAgentFeign.createProject(projectDTO);
+        if (restResponse.isSuccessful()) {
+            // 修改标的状态为: 已发布
+            LambdaUpdateWrapper<Project> updateWrapper = Wrappers.<Project>lambdaUpdate()
+                    .eq(Project::getId, id)
+                    .set(Project::getStatus, Integer.parseInt(approveStatus));
+            boolean update = this.update(updateWrapper);
+            if (update) {
+                return "success";
+            }
+        }
+        throw new BusinessException(TransactionErrorCode.E_150113);
+    }
+
+    private ProjectDTO convertProjectEntityToDTO(Project project) {
+        ProjectDTO projectDTO = new ProjectDTO();
+        BeanUtils.copyProperties(project, projectDTO);
+        return projectDTO;
     }
 }

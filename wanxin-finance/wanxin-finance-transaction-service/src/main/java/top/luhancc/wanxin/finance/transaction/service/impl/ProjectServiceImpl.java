@@ -1,5 +1,6 @@
 package top.luhancc.wanxin.finance.transaction.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import top.luhancc.wanxin.finance.transaction.common.constant.RepaymentWayCode;
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
 import top.luhancc.wanxin.finance.transaction.mapper.ProjectMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
+import top.luhancc.wanxin.finance.transaction.service.ConfigService;
 import top.luhancc.wanxin.finance.transaction.service.ProjectService;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,8 @@ import java.time.LocalDateTime;
 public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements ProjectService {
     @Autowired
     private ConsumerFeign consumerFeign;
+    @Autowired
+    private ConfigService configService;
 
     @Override
     public ProjectDTO issueTag(ProjectDTO projectDTO) {
@@ -46,9 +50,28 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             projectDTO.setRepaymentWay(RepaymentWayCode.FIXED_REPAYMENT.getCode());
             projectDTO.setType("NEW");
 
+
             Project project = new Project();
             BeanUtils.copyProperties(projectDTO, project);
+            project.setBorrowerAnnualRate(configService.getBorrowerAnnualRate());
+            project.setAnnualRate(configService.getAnnualRate());
+            project.setCommissionAnnualRate(configService.getCommissionAnnualRate());
+            project.setIsAssignment(0);
+
+            String projectName = "%s%s第%d次借款";
+            String sex = (Integer.parseInt(consumerDTO.getIdNumber().substring(16, 17))) % 2 == 0 ? "女士" : "先生";
+            int count = this.count(Wrappers.<Project>lambdaQuery().eq(Project::getConsumerId, consumerDTO.getId()));
+            String fullName = consumerDTO.getFullname();
+            projectName = String.format(projectName, fullName, sex, count);
+
+            project.setName(projectName);
+
             this.save(project);
+
+            projectDTO.setId(project.getId());
+            projectDTO.setName(projectName);
+
+            return projectDTO;
         }
         throw new BusinessException("未登录");
     }

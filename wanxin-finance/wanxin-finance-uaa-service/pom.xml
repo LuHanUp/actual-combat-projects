@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>wanxinp-finance-uaa-service</artifactId>
+    <artifactId>wanxin-finance-uaa-service</artifactId>
 
     <dependencies>
 

@@ -22,7 +22,7 @@
         <module>wanxin-finance-consumer-service</module>
         <module>wanxin-finance-account-service</module>
         <module>wanxin-finance-third-service</module>
-        <module>wanxinp-finance-uaa-service</module>
+        <module>wanxin-finance-uaa-service</module>
         <module>wanxin-finance-depository-agent-service</module>
         <module>wanxin-finance-transaction-service</module>
     </modules>

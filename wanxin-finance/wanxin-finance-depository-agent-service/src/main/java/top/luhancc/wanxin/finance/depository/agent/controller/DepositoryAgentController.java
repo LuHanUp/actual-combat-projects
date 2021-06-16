@@ -10,6 +10,9 @@ import top.luhancc.wanxin.finance.api.depository.agent.DepositoryAgentApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryBaseResponse;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryResponseDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.depository.agent.service.DepositoryRecordService;
 
 /**
@@ -30,5 +33,18 @@ public class DepositoryAgentController implements DepositoryAgentApi {
     public RestResponse<GatewayRequest> createOpenAccountParam(@RequestBody ConsumerRequest consumerRequest) {
         GatewayRequest gatewayRequest = depositoryRecordService.createOpenAccountParam(consumerRequest);
         return RestResponse.success(gatewayRequest);
+    }
+
+    @ApiOperation(value = "向存管系统发送标的信息")
+    @ApiImplicitParam(name = "projectDTO", value = "向存管系统发送标的信息",
+            required = true, dataType = "ProjectDTO", paramType = "body")
+    @PostMapping("/l/createProject")
+    @Override
+    public RestResponse<String> createProject(ProjectDTO projectDTO) {
+        DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse = depositoryRecordService.createProject(projectDTO);
+        RestResponse<String> restResponse = new RestResponse<>();
+        restResponse.setResult(depositoryResponse.getRespData().getRespCode());
+        restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
+        return restResponse;
     }
 }

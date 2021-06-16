@@ -3,6 +3,7 @@ package top.luhancc.wanxin.finance.api.depository.agent;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 
 /**
  * 银行存管系统代理服务API
@@ -12,10 +13,19 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayReq
  * @since 1.0.0
  */
 public interface DepositoryAgentApi {
+
     /**
      * 生成开户请求数据
      *
      * @param consumerRequest 开户信息 * @return
      */
     RestResponse<GatewayRequest> createOpenAccountParam(ConsumerRequest consumerRequest);
+
+    /**
+     * 向银行存管系统发送标的信息
+     *
+     * @param projectDTO
+     * @return
+     */
+    RestResponse<String> createProject(ProjectDTO projectDTO);
 }

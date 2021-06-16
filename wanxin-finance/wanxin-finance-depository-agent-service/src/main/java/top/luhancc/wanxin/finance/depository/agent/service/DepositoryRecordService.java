@@ -3,6 +3,9 @@ package top.luhancc.wanxin.finance.depository.agent.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryBaseResponse;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryResponseDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.depository.agent.mapper.entity.DepositoryRecord;
 
 /**
@@ -31,4 +34,12 @@ public interface DepositoryRecordService extends IService<DepositoryRecord> {
      * @return
      */
     boolean modifyRequestStatus(String requestNo, Integer status);
+
+    /**
+     * 保存标的
+     *
+     * @param projectDTO
+     * @return
+     */
+    DepositoryResponseDTO<DepositoryBaseResponse> createProject(ProjectDTO projectDTO);
 }

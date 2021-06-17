@@ -15,6 +15,7 @@ import top.luhancc.common.constant.AuthConstant;
 import top.luhancc.common.to.member.SocialUserTo;
 import top.luhancc.common.utils.R;
 import top.luhancc.common.bo.auth.MemberInfoBo;
+import top.luhancc.gulimall.auth.config.SessionConfig;
 import top.luhancc.gulimall.auth.domain.vo.WeiboAccessTokenVo;
 import top.luhancc.gulimall.auth.feign.MemberFeign;
 import top.luhancc.gulimall.auth.service.OAuthService;

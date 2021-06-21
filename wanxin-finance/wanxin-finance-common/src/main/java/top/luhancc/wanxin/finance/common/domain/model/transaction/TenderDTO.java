@@ -1,7 +1,7 @@
 ﻿package top.luhancc.wanxin.finance.common.domain.model.transaction;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ public class TenderDTO {
     /**
      * 主键
      */
-	@JsonSerialize(using= ToStringSerializer.class)
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -27,10 +27,10 @@ public class TenderDTO {
      */
     private Long consumerId;
 
-	/**
-	 * 投标人用户名
-	 */
-	private String consumerUsername;
+    /**
+     * 投标人用户名
+     */
+    private String consumerUsername;
 
     /**
      * 投标人用户编码

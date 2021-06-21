@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.luhancc.wanxin.finance.common.domain.*;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
@@ -24,6 +25,7 @@ import top.luhancc.wanxin.finance.transaction.common.constant.ProjectCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.RepaymentWayCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.TradingCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.TransactionErrorCode;
+import top.luhancc.wanxin.finance.transaction.common.utils.IncomeCalcUtil;
 import top.luhancc.wanxin.finance.transaction.common.utils.SecurityUtil;
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
 import top.luhancc.wanxin.finance.transaction.feign.DepositoryAgentFeign;
@@ -193,6 +195,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TenderDTO createTender(ProjectInvestDTO projectInvestDTO) {
         // 判断投标的金额是否满足最小投标金额
         BigDecimal miniInvestmentAmount = configService.getMiniInvestmentAmount();
@@ -213,11 +216,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 }
                 // 判断是否满标，标的状态为FULLY即为满标
                 Project project = this.getById(projectInvestDTO.getId());
-                if ("FULLY".equalsIgnoreCase(project.getProjectStatus())) {
+                if (ProjectCode.FULLY.getCode().equalsIgnoreCase(project.getProjectStatus())) {
                     throw new BusinessException(TransactionErrorCode.E_150114);
                 }
                 // 判断投标金额是否超过剩余未投金额
-                BigDecimal remainingAmount = getProjectRemainingAmount(convertProjectEntityToDTO(project));
+                ProjectDTO projectDTO = convertProjectEntityToDTO(project);
+                BigDecimal remainingAmount = getProjectRemainingAmount(projectDTO);
                 if (amount.compareTo(remainingAmount) >= 1) {
                     throw new BusinessException(TransactionErrorCode.E_150110);
                 }
@@ -235,11 +239,40 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 // 向存管代理服务发送投标请求
                 RestResponse<String> preTransactionResponse = depositoryAgentFeign.userAutoPreTransaction(
                         getUserAutoPreTransactionRequest(consumerDTO.getUserNo(), amount, project, tender));
+                if (preTransactionResponse.isSuccessful()) {
+                    // 更新投标状态，为已同步
+                    tender.setStatus(StatusCode.STATUS_IN.getCode());
+                    tenderMapper.updateById(tender);
+                    // 判断是否已经满标
+                    remainingAmount = getProjectRemainingAmount(projectDTO);
+                    if (remainingAmount.compareTo(new BigDecimal(0)) == 0) {
+                        // 修改标的状态为已满标
+                        project.setProjectStatus(ProjectCode.FULLY.getCode());
+                        this.updateById(project);
+                    }
+                    TenderDTO tenderDTO = convertTenderDTO(tender);
+                    projectDTO.setRepaymentWay(RepaymentWayCode.FIXED_REPAYMENT.getCode());
+                    tenderDTO.setProject(projectDTO);
+                    // 设置预期收益
+                    int month = ((Double) Math.ceil(project.getPeriod() / 30.0)).intValue();
+                    tenderDTO.setExpectedIncome(
+                            IncomeCalcUtil.getIncomeTotalInterest(amount, configService.getAnnualRate(), month));
+                    return tenderDTO;
+                } else {
+                    throw new BusinessException(TransactionErrorCode.E_150115);
+                }
             } else {
                 throw new BusinessException("获取用户余额失败,请重试");
             }
+        } else {
+            throw new BusinessException("请登录后进行投标");
         }
-        throw new BusinessException("请登录后进行投标");
+    }
+
+    private TenderDTO convertTenderDTO(Tender tender) {
+        TenderDTO tenderDTO = new TenderDTO();
+        BeanUtils.copyProperties(tender, tenderDTO);
+        return tenderDTO;
     }
 
     /**

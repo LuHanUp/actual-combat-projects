@@ -27,11 +27,15 @@ import top.luhancc.wanxin.finance.transaction.common.constant.TransactionErrorCo
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
 import top.luhancc.wanxin.finance.transaction.feign.DepositoryAgentFeign;
 import top.luhancc.wanxin.finance.transaction.mapper.ProjectMapper;
+import top.luhancc.wanxin.finance.transaction.mapper.TenderMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
+import top.luhancc.wanxin.finance.transaction.mapper.entity.Tender;
 import top.luhancc.wanxin.finance.transaction.service.ConfigService;
 import top.luhancc.wanxin.finance.transaction.service.ProjectService;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +52,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private ConfigService configService;
     @Autowired
     private DepositoryAgentFeign depositoryAgentFeign;
+    @Autowired
+    private TenderMapper tenderMapper;
 
     @Override
     public ProjectDTO issueTag(ProjectDTO projectDTO) {
@@ -147,9 +153,51 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         throw new BusinessException(TransactionErrorCode.E_150113);
     }
 
+    @Override
+    public List<ProjectDTO> queryProjectsIds(String ids) {
+        List<Long> idList = Arrays.asList(ids.split(","))
+                .stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+        LambdaQueryWrapper<Project> queryWrapper = Wrappers.<Project>lambdaQuery().in(Project::getId, idList);
+        List<Project> projectList = this.list(queryWrapper);
+        return projectList.stream()
+                .map(this::convertProjectEntityToDTO)
+                .map(projectDTO -> {
+                    // 查询标的剩余额度
+                    BigDecimal projectRemainingAmount = getProjectRemainingAmount(projectDTO);
+                    projectDTO.setRemainingAmount(projectRemainingAmount);
+                    // 查询标的出借人数
+                    Integer tenderCount = tenderMapper.selectCount(
+                            Wrappers.<Tender>lambdaQuery()
+                                    .eq(Tender::getProjectId, projectDTO.getId())
+                    );
+                    projectDTO.setTenderCount(tenderCount);
+                    return projectDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
     private ProjectDTO convertProjectEntityToDTO(Project project) {
         ProjectDTO projectDTO = new ProjectDTO();
         BeanUtils.copyProperties(project, projectDTO);
         return projectDTO;
+    }
+
+    /**
+     * 获取标的剩余可投额度
+     *
+     * @param project
+     * @return
+     */
+    private BigDecimal getProjectRemainingAmount(ProjectDTO project) {
+        // 根据标的id在投标表查询已投金额
+        List<BigDecimal> decimalList = tenderMapper.selectAmountInvestedByProjectId(project.getId()); // 求和结果集
+        BigDecimal amountInvested = new BigDecimal("0.0");
+        for (BigDecimal d : decimalList) {
+            amountInvested = amountInvested.add(d);
+        }
+        // 得到剩余额度
+        return project.getAmount().subtract(amountInvested);
     }
 }

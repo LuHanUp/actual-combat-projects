@@ -4,6 +4,9 @@ import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
+
+import java.util.List;
 
 /**
  * @author luHan
@@ -42,4 +45,20 @@ public interface TransactionApi {
      * @return
      */
     RestResponse<String> projectsApprovalStatus(Long id, String approveStatus);
+
+    /**
+     * 通过ids获取多个标的
+     *
+     * @param ids
+     * @return
+     */
+    RestResponse<List<ProjectDTO>> queryProjectsIds(String ids);
+
+    /**
+     * 根据标的id查询投标记录
+     *
+     * @param id
+     * @return
+     */
+    RestResponse<List<TenderOverviewDTO>> queryTendersByProjectId(Long id);
 }

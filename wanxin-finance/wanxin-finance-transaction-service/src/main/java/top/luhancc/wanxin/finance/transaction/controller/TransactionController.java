@@ -11,7 +11,10 @@ import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
 import top.luhancc.wanxin.finance.transaction.service.ProjectService;
+
+import java.util.List;
 
 /**
  * @author luHan
@@ -60,5 +63,19 @@ public class TransactionController implements TransactionApi {
     public RestResponse<String> projectsApprovalStatus(@PathVariable("id") Long id,
                                                        @PathVariable("approveStatus") String approveStatus) {
         return RestResponse.success(projectService.projectsApprovalStatus(id, approveStatus));
+    }
+
+    @ApiOperation("通过ids获取多个标的")
+    @GetMapping("/projects/{ids}")
+    @Override
+    public RestResponse<List<ProjectDTO>> queryProjectsIds(@PathVariable String ids) {
+        return RestResponse.success(projectService.queryProjectsIds(ids));
+    }
+
+    @ApiOperation("根据标的id查询投标记录")
+    @GetMapping("/tenders/projects/{id}")
+    @Override
+    public RestResponse<List<TenderOverviewDTO>> queryTendersByProjectId(@PathVariable Long id) {
+        return null;
     }
 }

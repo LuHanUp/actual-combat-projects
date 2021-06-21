@@ -6,6 +6,8 @@ import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
 
+import java.util.List;
+
 /**
  * @author luHan
  * @create 2021/6/15 14:05
@@ -41,4 +43,12 @@ public interface ProjectService extends IService<Project> {
      * @return String
      */
     String projectsApprovalStatus(Long id, String approveStatus);
+
+    /**
+     * 通过ids获取多个标的
+     *
+     * @param ids
+     * @return
+     */
+    List<ProjectDTO> queryProjectsIds(String ids);
 }

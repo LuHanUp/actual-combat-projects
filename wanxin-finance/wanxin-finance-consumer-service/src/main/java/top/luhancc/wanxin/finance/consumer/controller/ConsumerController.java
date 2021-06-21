@@ -4,12 +4,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.luhancc.wanxin.finance.api.consumer.ConsumerApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.BorrowerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
@@ -57,5 +55,13 @@ public class ConsumerController implements ConsumerApi {
         ConsumerDTO consumerDTO = new ConsumerDTO();
         BeanUtils.copyProperties(consumer, consumerDTO);
         return RestResponse.success(consumerDTO);
+    }
+
+    @ApiOperation("获取借款人用户信息")
+    @ApiImplicitParam(name = "id", value = "用户标识", required = true, dataType = "Long", paramType = "path")
+    @GetMapping("/my/borrowers/{id}")
+    @Override
+    public RestResponse<BorrowerDTO> getBorrower(@PathVariable Long id) {
+        return null;
     }
 }

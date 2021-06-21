@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import top.luhancc.wanxin.finance.api.transaction.TransactionApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.*;
 import top.luhancc.wanxin.finance.transaction.service.ProjectService;
 
 import java.util.List;
@@ -77,5 +75,14 @@ public class TransactionController implements TransactionApi {
     @Override
     public RestResponse<List<TenderOverviewDTO>> queryTendersByProjectId(@PathVariable Long id) {
         return RestResponse.success(projectService.queryTendersByProjectId(id));
+    }
+
+    @ApiOperation("用户投标")
+    @ApiImplicitParam(name = "projectInvestDTO", value = "投标信息",
+            required = true, dataType = "ProjectInvestDTO", paramType = "body")
+    @PostMapping("/my/tenders")
+    @Override
+    public RestResponse<TenderDTO> createTender(@RequestBody ProjectInvestDTO projectInvestDTO) {
+        return RestResponse.success(projectService.createTender(projectInvestDTO));
     }
 }

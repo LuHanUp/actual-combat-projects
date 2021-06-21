@@ -1,13 +1,18 @@
 package top.luhancc.wanxin.finance.consumer.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.dromara.hmily.annotation.Hmily;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.luhancc.wanxin.finance.common.domain.BusinessException;
@@ -16,10 +21,7 @@ import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.StatusCode;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
-import top.luhancc.wanxin.finance.common.domain.model.consumer.BankCardDTO;
-import top.luhancc.wanxin.finance.common.domain.model.consumer.BorrowerDTO;
-import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
-import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.*;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryConsumerResponse;
@@ -35,6 +37,7 @@ import top.luhancc.wanxin.finance.consumer.mapper.entity.Consumer;
 import top.luhancc.wanxin.finance.consumer.service.BankCardService;
 import top.luhancc.wanxin.finance.consumer.service.ConsumerService;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -51,6 +54,11 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
     private BankCardService bankCardService;
     @Autowired
     private DepositoryAgentFeign depositoryAgentFeign;
+
+    @Value("${depository.url}")
+    private String depositoryURL;
+
+    private OkHttpClient okHttpClient = new OkHttpClient().newBuilder().build();
 
     @Override
     @Hmily(confirmMethod = "registerConfirm", cancelMethod = "registerCancel")
@@ -119,6 +127,15 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
         borrowerDTO.setGender(cardInfoMap.get("gender"));
         borrowerDTO.setAge(Integer.parseInt(cardInfoMap.get("age")));
         return borrowerDTO;
+    }
+
+    @Override
+    public BalanceDetailsDTO getBalance(String userNo) {
+        RestResponse<BalanceDetailsDTO> restResponse = getBalanceFromDepository(userNo);
+        if (restResponse.isSuccessful()) {
+            return restResponse.getResult();
+        }
+        throw new BusinessException(restResponse.getMsg());
     }
 
     @Override
@@ -207,5 +224,28 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
         if (count > 0) {
             throw new BusinessException(ConsumerErrorCode.E_140107);
         }
+    }
+
+    /**
+     * 远程调用存管系统获取用户余额信息
+     *
+     * @param userNo 用户编码
+     * @return
+     */
+    private RestResponse<BalanceDetailsDTO> getBalanceFromDepository(String userNo) {
+        String url = depositoryURL + "/balance-details/" + userNo;
+        BalanceDetailsDTO balanceDetailsDTO;
+        Request request = new Request.Builder().url(url).build();
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                String responseBody = response.body().string();
+                balanceDetailsDTO = JSON.parseObject(responseBody,
+                        BalanceDetailsDTO.class);
+                return RestResponse.success(balanceDetailsDTO);
+            }
+        } catch (IOException e) {
+            log.warn("调用存管系统{}获取余额失败 ", url, e);
+        }
+        return RestResponse.validfail("获取失败");
     }
 }

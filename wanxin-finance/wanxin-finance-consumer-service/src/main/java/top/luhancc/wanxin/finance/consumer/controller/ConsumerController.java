@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.luhancc.wanxin.finance.api.consumer.ConsumerApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BorrowerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
@@ -63,5 +64,14 @@ public class ConsumerController implements ConsumerApi {
     @Override
     public RestResponse<BorrowerDTO> getBorrower(@PathVariable Long id) {
         return RestResponse.success(consumerService.getBorrower(id));
+    }
+
+    @ApiOperation("获取用户可用余额")
+    @ApiImplicitParam(name = "userNo", value = "用户编码", required = true,
+            dataType = "String")
+    @GetMapping("/l/balances/{userNo}")
+    @Override
+    public RestResponse<BalanceDetailsDTO> getBalance(@PathVariable String userNo) {
+        return RestResponse.success(consumerService.getBalance(userNo));
     }
 }

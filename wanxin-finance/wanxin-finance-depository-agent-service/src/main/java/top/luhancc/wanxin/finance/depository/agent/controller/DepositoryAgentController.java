@@ -12,6 +12,7 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRe
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryBaseResponse;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryResponseDTO;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.depository.agent.service.DepositoryRecordService;
 
@@ -46,5 +47,15 @@ public class DepositoryAgentController implements DepositoryAgentApi {
         restResponse.setResult(depositoryResponse.getRespData().getRespCode());
         restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
         return restResponse;
+    }
+
+    @ApiOperation(value = "预授权处理")
+    @ApiImplicitParam(name = "userAutoPreTransactionRequest", value = "平台向存管系统发送标的信息",
+            required = true, dataType = "UserAutoPreTransactionRequest", paramType = "body")
+    @PostMapping("/l/user-auto-pre-transaction")
+    @Override
+    public RestResponse<String> userAutoPreTransaction(UserAutoPreTransactionRequest userAutoPreTransactionRequest) {
+
+        return null;
     }
 }

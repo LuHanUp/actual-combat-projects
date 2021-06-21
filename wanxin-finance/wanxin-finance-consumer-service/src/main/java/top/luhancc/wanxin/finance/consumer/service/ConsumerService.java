@@ -1,6 +1,7 @@
 package top.luhancc.wanxin.finance.consumer.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BorrowerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
@@ -43,4 +44,12 @@ public interface ConsumerService extends IService<Consumer> {
      * @return
      */
     BorrowerDTO getBorrower(Long id);
+
+    /**
+     * 获取用户可用余额
+     *
+     * @param userNo
+     * @return
+     */
+    BalanceDetailsDTO getBalance(String userNo);
 }

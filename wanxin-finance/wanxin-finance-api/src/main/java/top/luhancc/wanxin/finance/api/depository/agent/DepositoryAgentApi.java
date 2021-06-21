@@ -3,6 +3,7 @@ package top.luhancc.wanxin.finance.api.depository.agent;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 
 /**
@@ -28,4 +29,13 @@ public interface DepositoryAgentApi {
      * @return
      */
     RestResponse<String> createProject(ProjectDTO projectDTO);
+
+    /**
+     * 预授权处理
+     *
+     * @param userAutoPreTransactionRequest 预授权处理信息
+     * @return
+     */
+    RestResponse<String> userAutoPreTransaction(UserAutoPreTransactionRequest
+                                                        userAutoPreTransactionRequest);
 }

@@ -2,9 +2,7 @@ package top.luhancc.wanxin.finance.api.transaction;
 
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.*;
 
 import java.util.List;
 
@@ -61,4 +59,12 @@ public interface TransactionApi {
      * @return
      */
     RestResponse<List<TenderOverviewDTO>> queryTendersByProjectId(Long id);
+
+    /**
+     * 用户投标
+     *
+     * @param projectInvestDTO
+     * @return
+     */
+    RestResponse<TenderDTO> createTender(ProjectInvestDTO projectInvestDTO);
 }

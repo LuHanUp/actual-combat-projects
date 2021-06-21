@@ -2,9 +2,7 @@ package top.luhancc.wanxin.finance.transaction.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.*;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
 
 import java.util.List;
@@ -60,4 +58,12 @@ public interface ProjectService extends IService<Project> {
      * @return
      */
     List<TenderOverviewDTO> queryTendersByProjectId(Long id);
+
+    /**
+     * 用户投标
+     *
+     * @param projectInvestDTO
+     * @return
+     */
+    TenderDTO createTender(ProjectInvestDTO projectInvestDTO);
 }

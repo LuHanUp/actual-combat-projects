@@ -17,15 +17,15 @@ import top.luhancc.wanxin.finance.common.domain.CodePrefixCode;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.StatusCode;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
-import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.*;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.common.util.CommonUtil;
 import top.luhancc.wanxin.finance.transaction.common.constant.ProjectCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.RepaymentWayCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.TransactionErrorCode;
+import top.luhancc.wanxin.finance.transaction.common.utils.SecurityUtil;
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
 import top.luhancc.wanxin.finance.transaction.feign.DepositoryAgentFeign;
 import top.luhancc.wanxin.finance.transaction.mapper.ProjectMapper;
@@ -191,6 +191,32 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             tenderOverviewDTO.setConsumerUsername(CommonUtil.hiddenMobile(tenderOverviewDTO.getConsumerUsername()));
             return tenderOverviewDTO;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public TenderDTO createTender(ProjectInvestDTO projectInvestDTO) {
+        // 判断投标的金额是否满足最小投标金额
+        BigDecimal miniInvestmentAmount = configService.getMiniInvestmentAmount();
+        BigDecimal amount = new BigDecimal(projectInvestDTO.getAmount());
+        if (amount.compareTo(miniInvestmentAmount) < 0) {
+            throw new BusinessException(TransactionErrorCode.E_150109);
+        }
+        // 判断账户余额是否足够
+        RestResponse<ConsumerDTO> restResponse = consumerFeign.getCurrConsumer();
+        if (restResponse.isSuccessful()) {
+            ConsumerDTO consumerDTO = restResponse.getResult();
+            RestResponse<BalanceDetailsDTO> restResponse1 = consumerFeign.getBalance(consumerDTO.getUserNo());
+            if (restResponse1.isSuccessful()) {
+                BalanceDetailsDTO balanceDetailsDTO = restResponse1.getResult();
+                BigDecimal balance = balanceDetailsDTO.getBalance();
+                if (balance.compareTo(amount) < 0) {
+                    throw new BusinessException(TransactionErrorCode.E_150112);
+                }
+            } else {
+                throw new BusinessException("获取用户余额失败,请重试");
+            }
+        }
+        throw new BusinessException("请登录后进行投标");
     }
 
     private ProjectDTO convertProjectEntityToDTO(Project project) {

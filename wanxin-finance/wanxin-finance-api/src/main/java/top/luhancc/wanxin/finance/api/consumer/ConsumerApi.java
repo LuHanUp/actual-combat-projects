@@ -1,6 +1,7 @@
 package top.luhancc.wanxin.finance.api.consumer;
 
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BorrowerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
@@ -46,4 +47,12 @@ public interface ConsumerApi {
      * @return
      */
     RestResponse<BorrowerDTO> getBorrower(Long id);
+
+    /**
+     * 获取当前登录用户余额信息
+     *
+     * @param userNo 用户编码
+     * @return
+     */
+    RestResponse<BalanceDetailsDTO> getBalance(String userNo);
 }

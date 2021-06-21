@@ -17,6 +17,7 @@ import top.luhancc.wanxin.finance.common.domain.StatusCode;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountDTO;
 import top.luhancc.wanxin.finance.common.domain.model.account.AccountRegisterDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BankCardDTO;
+import top.luhancc.wanxin.finance.common.domain.model.consumer.BorrowerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerRegisterDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
@@ -24,6 +25,7 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayReq
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryConsumerResponse;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryReturnCode;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
+import top.luhancc.wanxin.finance.common.util.IDCardUtil;
 import top.luhancc.wanxin.finance.consumer.domain.ConsumerErrorCode;
 import top.luhancc.wanxin.finance.consumer.feign.account.AccountFeign;
 import top.luhancc.wanxin.finance.consumer.feign.depository.agent.DepositoryAgentFeign;
@@ -32,6 +34,8 @@ import top.luhancc.wanxin.finance.consumer.mapper.entity.BankCard;
 import top.luhancc.wanxin.finance.consumer.mapper.entity.Consumer;
 import top.luhancc.wanxin.finance.consumer.service.BankCardService;
 import top.luhancc.wanxin.finance.consumer.service.ConsumerService;
+
+import java.util.Map;
 
 /**
  * @author luHan
@@ -102,17 +106,19 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
         return this.getOne(queryWrapper);
     }
 
-    private Consumer getByRequestNo(String requestNo) {
-        LambdaQueryWrapper<Consumer> queryWrapper = Wrappers.lambdaQuery(Consumer.class).eq(Consumer::getRequestNo, requestNo);
-        return this.getOne(queryWrapper);
-    }
-
-    private void checkMobile(String mobile) {
-        LambdaQueryWrapper<Consumer> queryWrapper = Wrappers.lambdaQuery(Consumer.class).eq(Consumer::getMobile, mobile);
-        int count = this.count(queryWrapper);
-        if (count > 0) {
-            throw new BusinessException(ConsumerErrorCode.E_140107);
+    @Override
+    public BorrowerDTO getBorrower(Long id) {
+        Consumer consumer = this.getById(id);
+        if (consumer == null) {
+            throw new BusinessException(ConsumerErrorCode.E_140101);
         }
+        BorrowerDTO borrowerDTO = new BorrowerDTO();
+        BeanUtils.copyProperties(consumer, borrowerDTO);
+        Map<String, String> cardInfoMap = IDCardUtil.getInfo(borrowerDTO.getIdNumber());
+        borrowerDTO.setBirthday(cardInfoMap.get("birthday"));
+        borrowerDTO.setGender(cardInfoMap.get("gender"));
+        borrowerDTO.setAge(Integer.parseInt(cardInfoMap.get("age")));
+        return borrowerDTO;
     }
 
     @Override
@@ -188,5 +194,18 @@ public class ConsumerServiceImpl extends ServiceImpl<ConsumerMapper, Consumer> i
                     .set(BankCard::getBankName, response.getBankName()));
         }
         return false;
+    }
+
+    private Consumer getByRequestNo(String requestNo) {
+        LambdaQueryWrapper<Consumer> queryWrapper = Wrappers.lambdaQuery(Consumer.class).eq(Consumer::getRequestNo, requestNo);
+        return this.getOne(queryWrapper);
+    }
+
+    private void checkMobile(String mobile) {
+        LambdaQueryWrapper<Consumer> queryWrapper = Wrappers.lambdaQuery(Consumer.class).eq(Consumer::getMobile, mobile);
+        int count = this.count(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ConsumerErrorCode.E_140107);
+        }
     }
 }

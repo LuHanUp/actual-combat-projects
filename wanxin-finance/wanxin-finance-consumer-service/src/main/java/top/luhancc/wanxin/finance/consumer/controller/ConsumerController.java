@@ -62,6 +62,6 @@ public class ConsumerController implements ConsumerApi {
     @GetMapping("/my/borrowers/{id}")
     @Override
     public RestResponse<BorrowerDTO> getBorrower(@PathVariable Long id) {
-        return null;
+        return RestResponse.success(consumerService.getBorrower(id));
     }
 }

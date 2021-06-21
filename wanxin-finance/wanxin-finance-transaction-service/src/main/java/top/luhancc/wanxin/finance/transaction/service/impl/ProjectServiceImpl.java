@@ -212,6 +212,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 if (balance.compareTo(amount) < 0) {
                     throw new BusinessException(TransactionErrorCode.E_150112);
                 }
+                // 判断是否满标，标的状态为FULLY即为满标
+                Project project = this.getById(projectInvestDTO.getId());
+                if ("FULLY".equalsIgnoreCase(project.getProjectStatus())) {
+                    throw new BusinessException(TransactionErrorCode.E_150114);
+                }
+                // 判断投标金额是否超过剩余未投金额
+                BigDecimal remainingAmount = getProjectRemainingAmount(convertProjectEntityToDTO(project));
+                if (amount.compareTo(remainingAmount) >= 1) {
+                    throw new BusinessException(TransactionErrorCode.E_150110);
+                }
+                // 判断此次投标后剩余未投金额是否还满足最小投标金额
+                // 借款人需要借1万，现在已经投标了8千 还剩2千 本次投标1950元 而系统规定最小投标金额为100元，这就会导致后面的50元无人能投了
+                // 所以我们不能出现这种情况
+                // 公式：本次投标后剩余未投金额 = 目前剩余未投金额 - 本次投标金额
+                BigDecimal afterRemainingAmount = remainingAmount.subtract(amount);
+                if (afterRemainingAmount.compareTo(miniInvestmentAmount) < 0) {
+                    throw new BusinessException(TransactionErrorCode.E_150111);
+                }
             } else {
                 throw new BusinessException("获取用户余额失败,请重试");
             }

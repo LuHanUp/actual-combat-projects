@@ -97,11 +97,13 @@ public class ProjectSearchServiceImpl implements ProjectIndexService {
                 ProjectDTO projectDTO = new ProjectDTO();
                 Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                 Double amount = (Double) sourceAsMap.get("amount");
+                Double annualRate = (Double) sourceAsMap.get("annualrate");
                 String projectStatus = (String) sourceAsMap.get("projectstatus");
                 Integer period = Integer.parseInt(sourceAsMap.get("period").toString());
                 String name = (String) sourceAsMap.get("name");
                 String description = (String) sourceAsMap.get("description");
                 projectDTO.setAmount(new BigDecimal(amount));
+                projectDTO.setAnnualRate(new BigDecimal(annualRate));
                 projectDTO.setProjectStatus(projectStatus);
                 projectDTO.setPeriod(period);
                 projectDTO.setName(name);

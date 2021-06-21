@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 
 /**
@@ -20,4 +21,10 @@ public interface DepositoryAgentFeign {
             required = true, dataType = "ProjectDTO", paramType = "body")
     @PostMapping("/l/createProject")
     public RestResponse<String> createProject(ProjectDTO projectDTO);
+
+    @ApiOperation(value = "投标预授权处理")
+    @ApiImplicitParam(name = "userAutoPreTransactionRequest", value = "平台向存管系统发送标的信息",
+            required = true, dataType = "UserAutoPreTransactionRequest", paramType = "body")
+    @PostMapping("/l/user-auto-pre-transaction")
+    public RestResponse<String> userAutoPreTransaction(UserAutoPreTransactionRequest request);
 }

@@ -12,18 +12,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.luhancc.wanxin.finance.common.domain.BusinessException;
-import top.luhancc.wanxin.finance.common.domain.CodePrefixCode;
-import top.luhancc.wanxin.finance.common.domain.RestResponse;
-import top.luhancc.wanxin.finance.common.domain.StatusCode;
+import top.luhancc.wanxin.finance.common.domain.*;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.*;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.common.util.CommonUtil;
 import top.luhancc.wanxin.finance.transaction.common.constant.ProjectCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.RepaymentWayCode;
+import top.luhancc.wanxin.finance.transaction.common.constant.TradingCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.TransactionErrorCode;
 import top.luhancc.wanxin.finance.transaction.common.utils.SecurityUtil;
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
@@ -230,11 +229,82 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 if (afterRemainingAmount.compareTo(miniInvestmentAmount) < 0) {
                     throw new BusinessException(TransactionErrorCode.E_150111);
                 }
+                // 保存投标信息，也就是投标
+                Tender tender = getTender(projectInvestDTO, consumerDTO, project);
+                tenderMapper.insert(tender);
+                // 向存管代理服务发送投标请求
+                RestResponse<String> preTransactionResponse = depositoryAgentFeign.userAutoPreTransaction(
+                        getUserAutoPreTransactionRequest(consumerDTO.getUserNo(), amount, project, tender));
             } else {
                 throw new BusinessException("获取用户余额失败,请重试");
             }
         }
         throw new BusinessException("请登录后进行投标");
+    }
+
+    /**
+     * 获取预授权处理请求信息
+     *
+     * @param userNo
+     * @param amount
+     * @param project
+     * @param tender
+     * @return
+     */
+    private UserAutoPreTransactionRequest getUserAutoPreTransactionRequest(String userNo, BigDecimal amount,
+                                                                           Project project, Tender tender) {
+        UserAutoPreTransactionRequest userAutoPreTransactionRequest = new UserAutoPreTransactionRequest();
+        // 冻结金额
+        userAutoPreTransactionRequest.setAmount(amount);
+        // 预处理业务类型
+        userAutoPreTransactionRequest.setBizType(PreprocessBusinessTypeCode.TENDER.getCode());
+        // 标的号
+        userAutoPreTransactionRequest.setProjectNo(project.getProjectNo());
+        // 请求流水号
+        userAutoPreTransactionRequest.setRequestNo(tender.getRequestNo());
+        // 投资人用户编码
+        userAutoPreTransactionRequest.setUserNo(userNo);
+        // 设置 关联业务实体标识
+        userAutoPreTransactionRequest.setId(tender.getId());
+        return userAutoPreTransactionRequest;
+    }
+
+    /**
+     * 生成投标信息数据
+     *
+     * @param projectInvestDTO
+     * @param consumerDTO
+     * @param project
+     * @return
+     */
+    private Tender getTender(ProjectInvestDTO projectInvestDTO, ConsumerDTO consumerDTO,
+                             Project project) {
+        Tender tender = new Tender();
+        // 投资人投标金额( 投标冻结金额 )
+        tender.setAmount(new BigDecimal(projectInvestDTO.getAmount()));
+        // 投标人用户标识
+        tender.setConsumerId(consumerDTO.getId());
+        tender.setConsumerUsername(consumerDTO.getUsername());
+        // 投标人用户编码
+        tender.setUserNo(consumerDTO.getUserNo());
+        // 标的标识
+        tender.setProjectId(projectInvestDTO.getId());
+        // 标的编码
+        tender.setProjectNo(project.getProjectNo());
+        // 投标状态
+        tender.setTenderStatus(TradingCode.FROZEN.getCode());
+        // 创建时间
+        tender.setCreateDate(LocalDateTime.now());
+        // 请求流水号
+        tender.setRequestNo(CodeNoUtil.getNo(CodePrefixCode.CODE_REQUEST_PREFIX));
+        // 可用状态
+        tender.setStatus(0);
+        tender.setProjectName(project.getName());
+        // 标的期限(单位:天)
+        tender.setProjectPeriod(project.getPeriod());
+        // 年化利率(投资人视图)
+        tender.setProjectAnnualRate(project.getAnnualRate());
+        return tender;
     }
 
     private ProjectDTO convertProjectEntityToDTO(Project project) {

@@ -76,6 +76,6 @@ public class TransactionController implements TransactionApi {
     @GetMapping("/tenders/projects/{id}")
     @Override
     public RestResponse<List<TenderOverviewDTO>> queryTendersByProjectId(@PathVariable Long id) {
-        return null;
+        return RestResponse.success(projectService.queryTendersByProjectId(id));
     }
 }

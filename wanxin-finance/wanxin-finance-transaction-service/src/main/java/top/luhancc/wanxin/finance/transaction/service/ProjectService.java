@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
 
 import java.util.List;
@@ -51,4 +52,12 @@ public interface ProjectService extends IService<Project> {
      * @return
      */
     List<ProjectDTO> queryProjectsIds(String ids);
+
+    /**
+     * 根据标的id查询投标记录
+     *
+     * @param id
+     * @return
+     */
+    List<TenderOverviewDTO> queryTendersByProjectId(Long id);
 }

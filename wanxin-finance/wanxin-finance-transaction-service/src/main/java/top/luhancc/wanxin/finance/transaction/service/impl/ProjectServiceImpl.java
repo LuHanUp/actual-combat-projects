@@ -20,7 +20,9 @@ import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectQueryDTO;
+import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderOverviewDTO;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
+import top.luhancc.wanxin.finance.common.util.CommonUtil;
 import top.luhancc.wanxin.finance.transaction.common.constant.ProjectCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.RepaymentWayCode;
 import top.luhancc.wanxin.finance.transaction.common.constant.TransactionErrorCode;
@@ -176,6 +178,19 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                     return projectDTO;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TenderOverviewDTO> queryTendersByProjectId(Long id) {
+        LambdaQueryWrapper<Tender> queryWrapper = Wrappers.<Tender>lambdaQuery().eq(Tender::getProjectId, id);
+        List<Tender> tenderList = tenderMapper.selectList(queryWrapper);
+        return tenderList.stream().map(tender -> {
+            TenderOverviewDTO tenderOverviewDTO = new TenderOverviewDTO();
+            BeanUtils.copyProperties(tender, tenderOverviewDTO);
+            // 隐藏手机号中间四位数
+            tenderOverviewDTO.setConsumerUsername(CommonUtil.hiddenMobile(tenderOverviewDTO.getConsumerUsername()));
+            return tenderOverviewDTO;
+        }).collect(Collectors.toList());
     }
 
     private ProjectDTO convertProjectEntityToDTO(Project project) {

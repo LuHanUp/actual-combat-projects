@@ -41,7 +41,7 @@ public class DepositoryAgentController implements DepositoryAgentApi {
             required = true, dataType = "ProjectDTO", paramType = "body")
     @PostMapping("/l/createProject")
     @Override
-    public RestResponse<String> createProject(ProjectDTO projectDTO) {
+    public RestResponse<String> createProject(@RequestBody ProjectDTO projectDTO) {
         DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse = depositoryRecordService.createProject(projectDTO);
         RestResponse<String> restResponse = new RestResponse<>();
         restResponse.setResult(depositoryResponse.getRespData().getRespCode());
@@ -54,8 +54,12 @@ public class DepositoryAgentController implements DepositoryAgentApi {
             required = true, dataType = "UserAutoPreTransactionRequest", paramType = "body")
     @PostMapping("/l/user-auto-pre-transaction")
     @Override
-    public RestResponse<String> userAutoPreTransaction(UserAutoPreTransactionRequest userAutoPreTransactionRequest) {
-
-        return null;
+    public RestResponse<String> userAutoPreTransaction(@RequestBody UserAutoPreTransactionRequest userAutoPreTransactionRequest) {
+        DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse =
+                depositoryRecordService.userAutoPreTransaction(userAutoPreTransactionRequest);
+        RestResponse<String> restResponse = new RestResponse<>();
+        restResponse.setResult(depositoryResponse.getRespData().getRespCode());
+        restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
+        return restResponse;
     }
 }

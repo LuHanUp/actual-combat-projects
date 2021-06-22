@@ -26,6 +26,7 @@
         <module>wanxin-finance-depository-agent-service</module>
         <module>wanxin-finance-transaction-service</module>
         <module>wanxin-finance-search-service</module>
+        <module>wanxin-finance-repayment-service</module>
     </modules>
 
     <packaging>pom</packaging>

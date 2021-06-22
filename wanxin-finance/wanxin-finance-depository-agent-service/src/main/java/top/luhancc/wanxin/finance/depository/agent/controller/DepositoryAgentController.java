@@ -11,6 +11,7 @@ import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.*;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.depository.agent.service.DepositoryRecordService;
 
@@ -76,7 +77,7 @@ public class DepositoryAgentController implements DepositoryAgentApi {
             paramType = "body")
     @PostMapping("l/modify-project-status")
     @Override
-    public RestResponse<String> modifyProjectStatus(ModifyProjectStatusDTO modifyProjectStatusDTO) {
+    public RestResponse<String> modifyProjectStatus(@RequestBody ModifyProjectStatusDTO modifyProjectStatusDTO) {
 
         return null;
     }

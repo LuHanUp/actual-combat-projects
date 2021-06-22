@@ -17,7 +17,11 @@ import top.luhancc.wanxin.finance.common.domain.*;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanDetailRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.ProjectWithTendersDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.*;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.common.util.CommonUtil;
@@ -29,6 +33,7 @@ import top.luhancc.wanxin.finance.transaction.common.utils.IncomeCalcUtil;
 import top.luhancc.wanxin.finance.transaction.common.utils.SecurityUtil;
 import top.luhancc.wanxin.finance.transaction.feign.ConsumerFeign;
 import top.luhancc.wanxin.finance.transaction.feign.DepositoryAgentFeign;
+import top.luhancc.wanxin.finance.transaction.feign.RepaymentFeign;
 import top.luhancc.wanxin.finance.transaction.mapper.ProjectMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.TenderMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
@@ -38,6 +43,7 @@ import top.luhancc.wanxin.finance.transaction.service.ProjectService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,6 +63,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private DepositoryAgentFeign depositoryAgentFeign;
     @Autowired
     private TenderMapper tenderMapper;
+    @Autowired
+    private RepaymentFeign repaymentFeign;
 
     @Override
     public ProjectDTO issueTag(ProjectDTO projectDTO) {
@@ -269,10 +277,105 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String loansApprovalStatus(Long id, String approveStatus, String commission) {
+        // 阶段一：生成放款明细
+        Project project = this.getById(id);
+        LambdaQueryWrapper<Tender> queryWrapper = Wrappers.<Tender>lambdaQuery().eq(Tender::getProjectId, id);
+        List<Tender> tenderList = tenderMapper.selectList(queryWrapper);
+        LoanRequest loanRequest = generateLoanRequest(project, tenderList, commission);
+        // 阶段二：放款--存管代理服务,让银行存款系统那边进行放款
+        RestResponse<String> restResponse = depositoryAgentFeign.confirmLoan(loanRequest);
+        if (!restResponse.isSuccessful()) {
+            throw new BusinessException(TransactionErrorCode.E_150113);
+        }
+        // 修改投标信息状态为已放款
+        updateTenderStatusAlreadyLoan(tenderList);
+        // 阶段三：修改标的状态--存管代理服务,修改银行存款系统那边的标的状态
+        ModifyProjectStatusDTO modifyProjectStatusDTO = new ModifyProjectStatusDTO();
+        modifyProjectStatusDTO.setRequestNo(loanRequest.getRequestNo());
+        modifyProjectStatusDTO.setProjectNo(project.getProjectNo());
+        modifyProjectStatusDTO.setProjectStatus(ProjectCode.REPAYING.getCode());
+        modifyProjectStatusDTO.setId(project.getId());
+        restResponse = depositoryAgentFeign.modifyProjectStatus(modifyProjectStatusDTO);
+        if (!restResponse.isSuccessful()) {
+            throw new BusinessException(TransactionErrorCode.E_150113);
+        }
+        // 修改标的状态为还款中
+        project.setProjectStatus(ProjectCode.REPAYING.getCode());
+        this.updateById(project);
+        // 阶段四：启动还款--还款服务生成还款计划
+        ProjectWithTendersDTO projectWithTendersDTO = new ProjectWithTendersDTO();
+        projectWithTendersDTO.setProject(convertProjectEntityToDTO(project));
+        projectWithTendersDTO.setTenders(convertTenderDTO(tenderList));
+        projectWithTendersDTO.setCommissionInvestorAnnualRate(configService.getCommissionInvestorAnnualRate());
+        projectWithTendersDTO.setCommissionBorrowerAnnualRate(configService.getCommissionBorrowerAnnualRate());
+        return "ok";
+    }
+
+    /**
+     * 更新投标信息: 已放款
+     *
+     * @param tenderList
+     */
+    private void updateTenderStatusAlreadyLoan(List<Tender> tenderList) {
+        for (Tender tender : tenderList) {
+            tender.setTenderStatus(TradingCode.LOAN.getCode());
+            tenderMapper.updateById(tender);
+        }
+    }
+
+    /**
+     * 根据标的和投标信息生成放款信息
+     *
+     * @param project    标的信息
+     * @param tenders    投标信息
+     * @param commission 佣金
+     * @return 放款信息
+     */
+    private LoanRequest generateLoanRequest(Project project, List<Tender> tenders, String commission) {
+        LoanRequest loanRequest = new LoanRequest();
+        // 处理投标明细
+        List<LoanDetailRequest> details = new ArrayList<>();
+        for (Tender tender : tenders) {
+            LoanDetailRequest loanDetailRequest = new LoanDetailRequest();
+            loanDetailRequest.setAmount(tender.getAmount());
+            loanDetailRequest.setPreRequestNo(tender.getRequestNo());
+            details.add(loanDetailRequest);
+        }
+        loanRequest.setDetails(details);
+        loanRequest.setCommission(StringUtils.isBlank(commission) ? new BigDecimal(0) : new BigDecimal(commission));
+        loanRequest.setProjectNo(project.getProjectNo());
+        loanRequest.setRequestNo(CodeNoUtil.getNo(CodePrefixCode.CODE_REQUEST_PREFIX));
+        loanRequest.setId(project.getId());
+        return loanRequest;
+    }
+
+    /**
+     * 将Tender对象转换为TenderDTO对象
+     *
+     * @param tender
+     * @return
+     */
     private TenderDTO convertTenderDTO(Tender tender) {
         TenderDTO tenderDTO = new TenderDTO();
         BeanUtils.copyProperties(tender, tenderDTO);
         return tenderDTO;
+    }
+
+    /**
+     * 将Tender对象转换为TenderDTO对象
+     *
+     * @param tenders
+     * @return
+     */
+    private List<TenderDTO> convertTenderDTO(List<Tender> tenders) {
+        List<TenderDTO> tenderDTOS = new ArrayList<>();
+        for (Tender tender : tenders) {
+            tenderDTOS.add(convertTenderDTO(tender));
+        }
+        return tenderDTOS;
     }
 
     /**

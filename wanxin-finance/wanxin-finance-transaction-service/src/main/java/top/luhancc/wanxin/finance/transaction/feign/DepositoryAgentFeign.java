@@ -4,7 +4,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 
@@ -27,4 +30,16 @@ public interface DepositoryAgentFeign {
             required = true, dataType = "UserAutoPreTransactionRequest", paramType = "body")
     @PostMapping("/l/user-auto-pre-transaction")
     public RestResponse<String> userAutoPreTransaction(UserAutoPreTransactionRequest request);
+
+    @ApiOperation(value = "审核标的满标放款")
+    @ApiImplicitParam(name = "loanRequest", value = "标的满标放款信息", required = true, dataType = "LoanRequest", paramType = "body")
+    @PostMapping("l/confirm-loan")
+    public RestResponse<String> confirmLoan(@RequestBody LoanRequest loanRequest);
+
+    @ApiOperation(value = "修改标的状态")
+    @ApiImplicitParam(name = "modifyProjectStatusDTO", value = "修改标的状态DTO",
+            required = true, dataType = "ModifyProjectStatusDTO",
+            paramType = "body")
+    @PostMapping("l/modify-project-status")
+    public RestResponse<String> modifyProjectStatus(@RequestBody ModifyProjectStatusDTO modifyProjectStatusDTO);
 }

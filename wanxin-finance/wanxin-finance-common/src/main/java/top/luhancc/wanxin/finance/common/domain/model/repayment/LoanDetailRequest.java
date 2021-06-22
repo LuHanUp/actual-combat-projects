@@ -1,4 +1,4 @@
-package top.luhancc.wanxin.finance.common.domain.model.depository.agent;
+package top.luhancc.wanxin.finance.common.domain.model.repayment;
 
 import lombok.Data;
 

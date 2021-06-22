@@ -3,7 +3,7 @@ package top.luhancc.wanxin.finance.api.depository.agent;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
-import top.luhancc.wanxin.finance.common.domain.model.depository.agent.LoanRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;

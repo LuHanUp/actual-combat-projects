@@ -30,7 +30,7 @@ public class TransactionController implements TransactionApi {
             dataType = "Project", paramType = "body")
     @PostMapping("/my/projects")
     @Override
-    public RestResponse<ProjectDTO> issueTag(ProjectDTO projectDTO) {
+    public RestResponse<ProjectDTO> issueTag(@RequestBody ProjectDTO projectDTO) {
         projectDTO = projectService.issueTag(projectDTO);
         return RestResponse.success(projectDTO);
     }
@@ -96,7 +96,6 @@ public class TransactionController implements TransactionApi {
     public RestResponse<String> loansApprovalStatus(@PathVariable("id") Long id,
                                                     @PathVariable("approveStatus") String approveStatus,
                                                     String commission) {
-
-        return null;
+        return RestResponse.success(projectService.loansApprovalStatus(id, approveStatus, commission));
     }
 }

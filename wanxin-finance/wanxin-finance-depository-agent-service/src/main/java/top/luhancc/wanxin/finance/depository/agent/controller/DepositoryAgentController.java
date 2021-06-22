@@ -10,9 +10,7 @@ import top.luhancc.wanxin.finance.api.depository.agent.DepositoryAgentApi;
 import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
-import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryBaseResponse;
-import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryResponseDTO;
-import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.*;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.depository.agent.service.DepositoryRecordService;
 
@@ -61,5 +59,25 @@ public class DepositoryAgentController implements DepositoryAgentApi {
         restResponse.setResult(depositoryResponse.getRespData().getRespCode());
         restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
         return restResponse;
+    }
+
+    @ApiOperation(value = "审核标的满标放款")
+    @ApiImplicitParam(name = "loanRequest", value = "标的满标放款信息", required = true, dataType = "LoanRequest", paramType = "body")
+    @PostMapping("l/confirm-loan")
+    @Override
+    public RestResponse<String> confirmLoan(@RequestBody LoanRequest loanRequest) {
+
+        return null;
+    }
+
+    @ApiOperation(value = "修改标的状态")
+    @ApiImplicitParam(name = "modifyProjectStatusDTO", value = "修改标的状态DTO",
+            required = true, dataType = "ModifyProjectStatusDTO",
+            paramType = "body")
+    @PostMapping("l/modify-project-status")
+    @Override
+    public RestResponse<String> modifyProjectStatus(ModifyProjectStatusDTO modifyProjectStatusDTO) {
+
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRe
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryBaseResponse;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryResponseDTO;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
@@ -60,4 +61,12 @@ public interface DepositoryRecordService extends IService<DepositoryRecord> {
      * @return
      */
     DepositoryResponseDTO<DepositoryBaseResponse> confirmLoan(LoanRequest loanRequest);
+
+    /**
+     * 修改标的状态
+     *
+     * @param modifyProjectStatusDTO
+     * @return
+     */
+    DepositoryResponseDTO<DepositoryBaseResponse> modifyProjectStatus(ModifyProjectStatusDTO modifyProjectStatusDTO);
 }

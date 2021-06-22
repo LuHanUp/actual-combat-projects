@@ -126,6 +126,23 @@ public class DepositoryRecordServiceImpl extends ServiceImpl<DepositoryRecordMap
         return sendHttpGet("CONFIRM_LOAN", url, reqData, depositoryRecord);
     }
 
+    @Override
+    public DepositoryResponseDTO<DepositoryBaseResponse> modifyProjectStatus(ModifyProjectStatusDTO modifyProjectStatusDTO) {
+        DepositoryRecord depositoryRecord = new DepositoryRecord(modifyProjectStatusDTO.getRequestNo(),
+                DepositoryRequestTypeCode.MODIFY_STATUS.getCode(), "ModifyProjectStatusDTO",
+                modifyProjectStatusDTO.getId());
+        DepositoryResponseDTO<DepositoryBaseResponse> handleIdempotent = handleIdempotent(depositoryRecord);
+        if (handleIdempotent != null) {
+            return handleIdempotent;
+        }
+        depositoryRecord = getEntityByRequestNo(modifyProjectStatusDTO.getRequestNo());
+        // 进行encode后发送存管系统
+        String string = JSON.toJSONString(modifyProjectStatusDTO);
+        String reqData = EncryptUtil.encodeUTF8StringBase64(string);
+        String url = configService.getDepositoryUrl() + "/service";
+        return sendHttpGet("MODIFY_PROJECT", url, reqData, depositoryRecord);
+    }
+
     /**
      * 对数据进行签名后将数据发送给存管系统
      *

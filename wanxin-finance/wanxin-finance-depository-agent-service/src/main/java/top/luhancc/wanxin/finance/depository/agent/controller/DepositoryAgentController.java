@@ -82,7 +82,11 @@ public class DepositoryAgentController implements DepositoryAgentApi {
     @PostMapping("l/modify-project-status")
     @Override
     public RestResponse<String> modifyProjectStatus(@RequestBody ModifyProjectStatusDTO modifyProjectStatusDTO) {
-
-        return null;
+        DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse =
+                depositoryRecordService.modifyProjectStatus(modifyProjectStatusDTO);
+        RestResponse<String> restResponse = new RestResponse<>();
+        restResponse.setResult(depositoryResponse.getRespData().getRespCode());
+        restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
+        return restResponse;
     }
 }

@@ -230,7 +230,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 // 所以我们不能出现这种情况
                 // 公式：本次投标后剩余未投金额 = 目前剩余未投金额 - 本次投标金额
                 BigDecimal afterRemainingAmount = remainingAmount.subtract(amount);
-                if (afterRemainingAmount.compareTo(miniInvestmentAmount) < 0) {
+                if (afterRemainingAmount.compareTo(miniInvestmentAmount) <= -1) {
                     throw new BusinessException(TransactionErrorCode.E_150111);
                 }
                 // 保存投标信息，也就是投标

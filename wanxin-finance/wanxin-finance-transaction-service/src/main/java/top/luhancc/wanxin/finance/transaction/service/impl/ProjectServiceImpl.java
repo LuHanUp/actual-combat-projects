@@ -17,6 +17,7 @@ import top.luhancc.wanxin.finance.common.domain.*;
 import top.luhancc.wanxin.finance.common.domain.model.PageVO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.BalanceDetailsDTO;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.ConsumerDTO;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryReturnCode;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanDetailRequest;
@@ -151,7 +152,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         // 调用存管代理服务同步标的信息
         RestResponse<String> restResponse = depositoryAgentFeign.createProject(projectDTO);
-        if (restResponse.isSuccessful()) {
+        if (restResponse.isSuccessful() && restResponse.getResult().equalsIgnoreCase(DepositoryReturnCode.RETURN_CODE_00000.getCode())) {
             // 修改标的状态为: 已发布
             LambdaUpdateWrapper<Project> updateWrapper = Wrappers.<Project>lambdaUpdate()
                     .eq(Project::getId, id)
@@ -247,7 +248,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 // 向存管代理服务发送投标请求
                 RestResponse<String> preTransactionResponse = depositoryAgentFeign.userAutoPreTransaction(
                         getUserAutoPreTransactionRequest(consumerDTO.getUserNo(), amount, project, tender));
-                if (preTransactionResponse.isSuccessful()) {
+                if (preTransactionResponse.isSuccessful() && preTransactionResponse.getResult().equalsIgnoreCase(DepositoryReturnCode.RETURN_CODE_00000.getCode())) {
                     // 更新投标状态，为已同步
                     tender.setStatus(StatusCode.STATUS_IN.getCode());
                     tenderMapper.updateById(tender);
@@ -287,7 +288,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         LoanRequest loanRequest = generateLoanRequest(project, tenderList, commission);
         // 阶段二：放款--存管代理服务,让银行存款系统那边进行放款
         RestResponse<String> restResponse = depositoryAgentFeign.confirmLoan(loanRequest);
-        if (!restResponse.isSuccessful()) {
+        if (!restResponse.isSuccessful() || !restResponse.getResult().equalsIgnoreCase(DepositoryReturnCode.RETURN_CODE_00000.getCode())) {
             throw new BusinessException(TransactionErrorCode.E_150113);
         }
         // 修改投标信息状态为已放款
@@ -299,7 +300,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         modifyProjectStatusDTO.setProjectStatus(ProjectCode.REPAYING.getCode());
         modifyProjectStatusDTO.setId(project.getId());
         restResponse = depositoryAgentFeign.modifyProjectStatus(modifyProjectStatusDTO);
-        if (!restResponse.isSuccessful()) {
+        if (!restResponse.isSuccessful() || !restResponse.getResult().equalsIgnoreCase(DepositoryReturnCode.RETURN_CODE_00000.getCode())) {
             throw new BusinessException(TransactionErrorCode.E_150113);
         }
         // 修改标的状态为还款中

@@ -67,8 +67,12 @@ public class DepositoryAgentController implements DepositoryAgentApi {
     @PostMapping("l/confirm-loan")
     @Override
     public RestResponse<String> confirmLoan(@RequestBody LoanRequest loanRequest) {
-
-        return null;
+        DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse =
+                depositoryRecordService.confirmLoan(loanRequest);
+        RestResponse<String> restResponse = new RestResponse<>();
+        restResponse.setResult(depositoryResponse.getRespData().getRespCode());
+        restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
+        return restResponse;
     }
 
     @ApiOperation(value = "修改标的状态")

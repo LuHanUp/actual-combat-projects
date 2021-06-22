@@ -15,6 +15,7 @@ import top.luhancc.wanxin.finance.common.domain.StatusCode;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.*;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.util.EncryptUtil;
 import top.luhancc.wanxin.finance.common.util.RSAUtil;
@@ -107,6 +108,22 @@ public class DepositoryRecordServiceImpl extends ServiceImpl<DepositoryRecordMap
         String reqData = EncryptUtil.encodeUTF8StringBase64(string);
         String url = configService.getDepositoryUrl() + "/service";
         return sendHttpGet("USER_AUTO_PRE_TRANSACTION", url, reqData, depositoryRecord);
+    }
+
+    @Override
+    public DepositoryResponseDTO<DepositoryBaseResponse> confirmLoan(LoanRequest loanRequest) {
+        DepositoryRecord depositoryRecord = new DepositoryRecord(loanRequest.getRequestNo(),
+                DepositoryRequestTypeCode.FULL_LOAN.getCode(), "LoanRequest", loanRequest.getId());
+        DepositoryResponseDTO<DepositoryBaseResponse> handleIdempotent = handleIdempotent(depositoryRecord);
+        if (handleIdempotent != null) {
+            return handleIdempotent;
+        }
+        depositoryRecord = getEntityByRequestNo(loanRequest.getRequestNo());
+        // 进行encode后发送存管系统
+        String string = JSON.toJSONString(loanRequest);
+        String reqData = EncryptUtil.encodeUTF8StringBase64(string);
+        String url = configService.getDepositoryUrl() + "/service";
+        return sendHttpGet("CONFIRM_LOAN", url, reqData, depositoryRecord);
     }
 
     /**

@@ -48,7 +48,7 @@ public class DepositoryAgentController implements DepositoryAgentApi {
         return restResponse;
     }
 
-    @ApiOperation(value = "投标预授权处理")
+    @ApiOperation(value = "预授权处理")
     @ApiImplicitParam(name = "userAutoPreTransactionRequest", value = "平台向存管系统发送标的信息",
             required = true, dataType = "UserAutoPreTransactionRequest", paramType = "body")
     @PostMapping("/l/user-auto-pre-transaction")

@@ -2,13 +2,13 @@ package top.luhancc.wanxin.finance.repayment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import freemarker.core.BugException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.luhancc.wanxin.finance.common.domain.CodePrefixCode;
-import top.luhancc.wanxin.finance.common.domain.RepaymentWayCode;
-import top.luhancc.wanxin.finance.common.domain.StatusCode;
+import top.luhancc.wanxin.finance.common.domain.*;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryReturnCode;
+import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.EqualInterestRepayment;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.ProjectWithTendersDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
@@ -16,6 +16,7 @@ import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderDTO;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.common.util.DateUtil;
 import top.luhancc.wanxin.finance.repayment.common.utils.RepaymentUtil;
+import top.luhancc.wanxin.finance.repayment.feign.DepositoryAgentFeign;
 import top.luhancc.wanxin.finance.repayment.mapper.ReceivablePlanMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.RepaymentDetailMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.RepaymentPlanMapper;
@@ -24,6 +25,7 @@ import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentDetail;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentPlan;
 import top.luhancc.wanxin.finance.repayment.service.RepaymentService;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,12 +39,14 @@ import java.util.Map;
  */
 @Service
 public class RepaymentServiceImpl implements RepaymentService {
-    @Autowired
+    @Resource
     private ReceivablePlanMapper receivablePlanMapper;
-    @Autowired
+    @Resource
     private RepaymentPlanMapper repaymentPlanMapper;
-    @Autowired
+    @Resource
     private RepaymentDetailMapper repaymentDetailMapper;
+    @Autowired
+    private DepositoryAgentFeign depositoryAgentFeign;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -101,6 +105,25 @@ public class RepaymentServiceImpl implements RepaymentService {
             repaymentDetailMapper.insert(repaymentDetail);
         }
         return repaymentDetail;
+    }
+
+    @Override
+    public Boolean preRepayment(RepaymentPlan repaymentPlan, String preRequestNo) {
+        UserAutoPreTransactionRequest userAutoPreTransactionRequest = new UserAutoPreTransactionRequest();
+        userAutoPreTransactionRequest.setAmount(repaymentPlan.getAmount());
+        userAutoPreTransactionRequest.setRequestNo(preRequestNo);
+        userAutoPreTransactionRequest.setUserNo(repaymentPlan.getUserNo());
+        userAutoPreTransactionRequest.setBizType(PreprocessBusinessTypeCode.REPAYMENT.getCode());
+        userAutoPreTransactionRequest.setPreMarketingAmount(new BigDecimal(0));
+        userAutoPreTransactionRequest.setRemark("还款冻结资金");
+        userAutoPreTransactionRequest.setProjectNo(repaymentPlan.getProjectNo());
+        userAutoPreTransactionRequest.setId(repaymentPlan.getId());
+        RestResponse<String> restResponse = depositoryAgentFeign.userAutoPreTransaction(userAutoPreTransactionRequest);
+        if (restResponse.isSuccessful()
+                && DepositoryReturnCode.RETURN_CODE_00000.getCode().equalsIgnoreCase(restResponse.getResult())) {
+            return true;
+        }
+        throw new BugException(restResponse.getResult());
     }
 
     /**

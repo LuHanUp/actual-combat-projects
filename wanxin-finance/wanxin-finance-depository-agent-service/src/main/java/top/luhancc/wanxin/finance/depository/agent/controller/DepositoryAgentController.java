@@ -93,8 +93,7 @@ public class DepositoryAgentController implements DepositoryAgentApi {
 
     @ApiOperation(value = "确认还款")
     @ApiImplicitParam(name = "repaymentRequest", value = "还款信息",
-            required = true, dataType = "RepaymentRequest", paramType =
-            "body")
+            required = true, dataType = "RepaymentRequest", paramType = "body")
     @PostMapping("l/confirm-repayment")
     @Override
     public RestResponse<String> confirmRepayment(RepaymentRequest repaymentRequest) {

@@ -9,6 +9,7 @@ import top.luhancc.wanxin.finance.common.domain.RestResponse;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 
 /**
@@ -42,4 +43,10 @@ public interface DepositoryAgentFeign {
             paramType = "body")
     @PostMapping("l/modify-project-status")
     public RestResponse<String> modifyProjectStatus(@RequestBody ModifyProjectStatusDTO modifyProjectStatusDTO);
+
+    @ApiOperation(value = "确认还款")
+    @ApiImplicitParam(name = "repaymentRequest", value = "还款信息",
+            required = true, dataType = "RepaymentRequest", paramType = "body")
+    @PostMapping("l/confirm-repayment")
+    public RestResponse<String> confirmRepayment(RepaymentRequest repaymentRequest);
 }

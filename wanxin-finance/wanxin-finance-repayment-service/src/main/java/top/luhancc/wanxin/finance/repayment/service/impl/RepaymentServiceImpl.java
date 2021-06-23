@@ -159,6 +159,15 @@ public class RepaymentServiceImpl implements RepaymentService {
     }
 
     @Override
+    public void invokeConfirmRepayment(RepaymentPlan repaymentPlan, RepaymentRequest repaymentRequest) {
+        RestResponse<String> repaymentResponse = depositoryAgentFeign.confirmRepayment(repaymentRequest);
+        if (!repaymentResponse.isSuccessful() ||
+                !DepositoryReturnCode.RETURN_CODE_00000.getCode().equals(repaymentResponse.getResult())) {
+            throw new BusinessException("还款失败");
+        }
+    }
+
+    @Override
     public RepaymentPlan getByRepaymentPlanId(Long id) {
         return repaymentPlanMapper.selectById(id);
     }

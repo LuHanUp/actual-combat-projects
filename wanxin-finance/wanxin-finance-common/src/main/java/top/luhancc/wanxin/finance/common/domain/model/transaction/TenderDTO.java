@@ -1,4 +1,4 @@
-﻿package top.luhancc.wanxin.finance.common.domain.model.transaction;
+package top.luhancc.wanxin.finance.common.domain.model.transaction;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;

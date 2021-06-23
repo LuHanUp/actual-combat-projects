@@ -1,4 +1,4 @@
-﻿package top.luhancc.wanxin.finance.common.domain.model.consumer;
+package top.luhancc.wanxin.finance.common.domain.model.consumer;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

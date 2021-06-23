@@ -158,6 +158,11 @@ public class RepaymentServiceImpl implements RepaymentService {
         return true;
     }
 
+    @Override
+    public RepaymentPlan getByRepaymentPlanId(Long id) {
+        return repaymentPlanMapper.selectById(id);
+    }
+
     /**
      * 保存还款计划到数据库
      *

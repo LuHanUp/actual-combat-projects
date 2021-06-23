@@ -68,4 +68,6 @@ public interface RepaymentService {
      * @return
      */
     Boolean confirmRepayment(RepaymentPlan repaymentPlan, RepaymentRequest repaymentRequest);
+
+    RepaymentPlan getByRepaymentPlanId(Long id);
 }

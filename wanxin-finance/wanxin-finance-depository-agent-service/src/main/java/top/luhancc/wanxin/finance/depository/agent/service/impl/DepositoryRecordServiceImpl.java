@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.luhancc.wanxin.finance.common.cache.Cache;
 import top.luhancc.wanxin.finance.common.domain.BusinessException;
+import top.luhancc.wanxin.finance.common.domain.PreprocessBusinessTypeCode;
 import top.luhancc.wanxin.finance.common.domain.StatusCode;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRequest;
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.*;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.util.EncryptUtil;
 import top.luhancc.wanxin.finance.common.util.RSAUtil;
@@ -143,13 +145,35 @@ public class DepositoryRecordServiceImpl extends ServiceImpl<DepositoryRecordMap
         return sendHttpGet("MODIFY_PROJECT", url, reqData, depositoryRecord);
     }
 
+    @Override
+    public DepositoryResponseDTO<DepositoryBaseResponse> confirmRepayment(RepaymentRequest repaymentRequest) {
+        //构造交易记录
+        DepositoryRecord depositoryRecord = new DepositoryRecord(repaymentRequest.getRequestNo(),
+                PreprocessBusinessTypeCode.REPAYMENT.getCode(), "Repayment", repaymentRequest.getId());
+        // 分布式事务幂等性实现
+        DepositoryResponseDTO<DepositoryBaseResponse> responseDTO = handleIdempotent(depositoryRecord);
+        if (responseDTO != null) {
+            return responseDTO;
+        }
+        // 获取最新交易记录
+        depositoryRecord = getEntityByRequestNo(repaymentRequest.getRequestNo());
+        /* 确认还款(调用银行存管系统) */
+        String jsonString = JSON.toJSONString(repaymentRequest);
+        // 业务数据报文, base64处理，方便传输
+        String reqData = EncryptUtil.encodeUTF8StringBase64(jsonString);
+        // 拼接银行存管系统请求地址
+        String url = configService.getDepositoryUrl() + "/service";
+        // 封装通用方法, 请求银行存管系统
+        return sendHttpGet("CONFIRM_REPAYMENT", url, reqData, depositoryRecord);
+    }
+
     /**
      * 对数据进行签名后将数据发送给存管系统
      *
-     * @param serviceName
-     * @param url
-     * @param reqData
-     * @param depositoryRecord
+     * @param serviceName      业务名称
+     * @param url              请求地址
+     * @param reqData          请求数据
+     * @param depositoryRecord 请求记录
      * @return
      */
     private DepositoryResponseDTO<DepositoryBaseResponse> sendHttpGet(String serviceName, String url, String reqData, DepositoryRecord depositoryRecord) {

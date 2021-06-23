@@ -12,6 +12,7 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.ConsumerRe
 import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.*;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.depository.agent.service.DepositoryRecordService;
 
@@ -84,6 +85,21 @@ public class DepositoryAgentController implements DepositoryAgentApi {
     public RestResponse<String> modifyProjectStatus(@RequestBody ModifyProjectStatusDTO modifyProjectStatusDTO) {
         DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse =
                 depositoryRecordService.modifyProjectStatus(modifyProjectStatusDTO);
+        RestResponse<String> restResponse = new RestResponse<>();
+        restResponse.setResult(depositoryResponse.getRespData().getRespCode());
+        restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());
+        return restResponse;
+    }
+
+    @ApiOperation(value = "确认还款")
+    @ApiImplicitParam(name = "repaymentRequest", value = "还款信息",
+            required = true, dataType = "RepaymentRequest", paramType =
+            "body")
+    @PostMapping("l/confirm-repayment")
+    @Override
+    public RestResponse<String> confirmRepayment(RepaymentRequest repaymentRequest) {
+        DepositoryResponseDTO<DepositoryBaseResponse> depositoryResponse =
+                depositoryRecordService.confirmRepayment(repaymentRequest);
         RestResponse<String> restResponse = new RestResponse<>();
         restResponse.setResult(depositoryResponse.getRespData().getRespCode());
         restResponse.setMsg(depositoryResponse.getRespData().getRespMsg());

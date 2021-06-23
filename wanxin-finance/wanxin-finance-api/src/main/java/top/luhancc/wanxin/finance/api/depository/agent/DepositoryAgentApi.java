@@ -6,6 +6,7 @@ import top.luhancc.wanxin.finance.common.domain.model.consumer.rquest.GatewayReq
 import top.luhancc.wanxin.finance.common.domain.model.repayment.LoanRequest;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.ModifyProjectStatusDTO;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 
 /**
@@ -56,4 +57,12 @@ public interface DepositoryAgentApi {
      * @return
      */
     RestResponse<String> modifyProjectStatus(ModifyProjectStatusDTO modifyProjectStatusDTO);
+
+    /**
+     * 还款确认
+     *
+     * @param repaymentRequest 还款信息
+     * @return
+     */
+    RestResponse<String> confirmRepayment(RepaymentRequest repaymentRequest);
 }

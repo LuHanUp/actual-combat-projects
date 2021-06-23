@@ -11,15 +11,18 @@ import top.luhancc.wanxin.finance.common.domain.model.depository.agent.Depositor
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.EqualInterestRepayment;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.ProjectWithTendersDTO;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderDTO;
 import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.common.util.DateUtil;
 import top.luhancc.wanxin.finance.repayment.common.utils.RepaymentUtil;
 import top.luhancc.wanxin.finance.repayment.feign.DepositoryAgentFeign;
+import top.luhancc.wanxin.finance.repayment.mapper.ReceivableDetailMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.ReceivablePlanMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.RepaymentDetailMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.RepaymentPlanMapper;
+import top.luhancc.wanxin.finance.repayment.mapper.entity.ReceivableDetail;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.ReceivablePlan;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentDetail;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentPlan;
@@ -45,6 +48,8 @@ public class RepaymentServiceImpl implements RepaymentService {
     private RepaymentPlanMapper repaymentPlanMapper;
     @Resource
     private RepaymentDetailMapper repaymentDetailMapper;
+    @Resource
+    private ReceivableDetailMapper receivableDetailMapper;
     @Autowired
     private DepositoryAgentFeign depositoryAgentFeign;
 
@@ -124,6 +129,33 @@ public class RepaymentServiceImpl implements RepaymentService {
             return true;
         }
         throw new BugException(restResponse.getResult());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean confirmRepayment(RepaymentPlan repaymentPlan, RepaymentRequest repaymentRequest) {
+        // 设置还款明细为已同步
+        String preRequestNo = repaymentRequest.getPreRequestNo();
+        repaymentDetailMapper.update(null, Wrappers.<RepaymentDetail>lambdaUpdate()
+                .set(RepaymentDetail::getStatus, StatusCode.STATUS_IN.getCode())
+                .eq(RepaymentDetail::getRequestNo, preRequestNo));
+        // 投资人应收明细为已收
+        List<ReceivablePlan> receivablePlanList = receivablePlanMapper.selectList(Wrappers.<ReceivablePlan>lambdaUpdate()
+                .eq(ReceivablePlan::getRepaymentId, repaymentPlan.getId()));
+        receivablePlanList.forEach(receivablePlan -> {
+            receivablePlan.setReceivableStatus(1);
+            receivablePlanMapper.updateById(receivablePlan);
+            // 保存应收明细
+            ReceivableDetail receivableDetail = new ReceivableDetail();
+            receivableDetail.setReceivableId(receivablePlan.getId());
+            receivableDetail.setAmount(receivablePlan.getAmount());
+            receivableDetail.setReceivableDate(LocalDateTime.now());
+            receivableDetailMapper.insert(receivableDetail);
+        });
+        // 更新还款计划为：已还款
+        repaymentPlan.setRepaymentStatus("1");
+        repaymentPlanMapper.updateById(repaymentPlan);
+        return true;
     }
 
     /**

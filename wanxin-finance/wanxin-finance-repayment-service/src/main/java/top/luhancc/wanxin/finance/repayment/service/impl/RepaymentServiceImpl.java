@@ -5,15 +5,19 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.luhancc.wanxin.finance.common.domain.CodePrefixCode;
 import top.luhancc.wanxin.finance.common.domain.RepaymentWayCode;
+import top.luhancc.wanxin.finance.common.domain.StatusCode;
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.DepositoryReturnCode;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.EqualInterestRepayment;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.ProjectWithTendersDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderDTO;
+import top.luhancc.wanxin.finance.common.util.CodeNoUtil;
 import top.luhancc.wanxin.finance.common.util.DateUtil;
 import top.luhancc.wanxin.finance.repayment.common.utils.RepaymentUtil;
 import top.luhancc.wanxin.finance.repayment.mapper.ReceivablePlanMapper;
+import top.luhancc.wanxin.finance.repayment.mapper.RepaymentDetailMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.RepaymentPlanMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.ReceivablePlan;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentDetail;
@@ -37,6 +41,8 @@ public class RepaymentServiceImpl implements RepaymentService {
     private ReceivablePlanMapper receivablePlanMapper;
     @Autowired
     private RepaymentPlanMapper repaymentPlanMapper;
+    @Autowired
+    private RepaymentDetailMapper repaymentDetailMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -82,8 +88,19 @@ public class RepaymentServiceImpl implements RepaymentService {
 
     @Override
     public RepaymentDetail saveRepaymentDetail(RepaymentPlan repaymentPlan) {
-
-        return null;
+        LambdaQueryWrapper<RepaymentDetail> queryWrapper = Wrappers.<RepaymentDetail>lambdaQuery()
+                .eq(RepaymentDetail::getRepaymentPlanId, repaymentPlan.getId());
+        RepaymentDetail repaymentDetail = repaymentDetailMapper.selectOne(queryWrapper);
+        if (repaymentDetail == null) {
+            repaymentDetail = new RepaymentDetail();
+            repaymentDetail.setAmount(repaymentPlan.getAmount());
+            repaymentDetail.setRepaymentDate(LocalDateTime.now());
+            repaymentDetail.setRepaymentPlanId(repaymentPlan.getId());
+            repaymentDetail.setRequestNo(CodeNoUtil.getNo(CodePrefixCode.CODE_REQUEST_PREFIX));
+            repaymentDetail.setStatus(StatusCode.STATUS_OUT.getCode());
+            repaymentDetailMapper.insert(repaymentDetail);
+        }
+        return repaymentDetail;
     }
 
     /**

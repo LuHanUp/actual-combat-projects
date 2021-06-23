@@ -16,6 +16,7 @@ import top.luhancc.wanxin.finance.repayment.common.utils.RepaymentUtil;
 import top.luhancc.wanxin.finance.repayment.mapper.ReceivablePlanMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.RepaymentPlanMapper;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.ReceivablePlan;
+import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentDetail;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentPlan;
 import top.luhancc.wanxin.finance.repayment.service.RepaymentService;
 
@@ -74,6 +75,17 @@ public class RepaymentServiceImpl implements RepaymentService {
         return repaymentPlanMapper.selectCount(queryWrapper);
     }
 
+    @Override
+    public List<RepaymentPlan> selectDueRepayment(String date) {
+        return repaymentPlanMapper.selectDueRepayment(date);
+    }
+
+    @Override
+    public RepaymentDetail saveRepaymentDetail(RepaymentPlan repaymentPlan) {
+
+        return null;
+    }
+
     /**
      * 保存还款计划到数据库
      *
@@ -81,7 +93,7 @@ public class RepaymentServiceImpl implements RepaymentService {
      * @param fixedRepayment 等额本息还款明细
      * @return
      */
-    public List<RepaymentPlan> saveRepaymentPlan(ProjectDTO projectDTO, EqualInterestRepayment fixedRepayment) {
+    private List<RepaymentPlan> saveRepaymentPlan(ProjectDTO projectDTO, EqualInterestRepayment fixedRepayment) {
         List<RepaymentPlan> repaymentPlans = new ArrayList<>();
         // 获取每期利息
         Map<Integer, BigDecimal> interestMap = fixedRepayment.getInterestMap();

@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.luhancc.wanxin.finance.repayment.mapper.RepaymentPlanMapper">
 
+    <select id="selectDueRepayment"
+            resultType="top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentPlan">
+        SELECT *
+        FROM repayment_plan
+        WHERE DATE_FORMAT(SHOULD_REPAYMENT_DATE, '%Y-%m-%d') = #{date}
+          AND REPAYMENT_STATUS = '0'
+    </select>
 </mapper>

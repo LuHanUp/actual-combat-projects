@@ -39,6 +39,7 @@ import top.luhancc.wanxin.finance.transaction.mapper.ProjectMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.TenderMapper;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Project;
 import top.luhancc.wanxin.finance.transaction.mapper.entity.Tender;
+import top.luhancc.wanxin.finance.transaction.message.LoansApprovalStatusTransactionalProducer;
 import top.luhancc.wanxin.finance.transaction.service.ConfigService;
 import top.luhancc.wanxin.finance.transaction.service.ProjectService;
 
@@ -278,6 +279,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
     }
 
+    @Autowired
+    private LoansApprovalStatusTransactionalProducer loansApprovalStatusTransactionalProducer;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String loansApprovalStatus(Long id, String approveStatus, String commission) {
@@ -303,16 +307,25 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         if (!restResponse.isSuccessful() || !restResponse.getResult().equalsIgnoreCase(DepositoryReturnCode.RETURN_CODE_00000.getCode())) {
             throw new BusinessException(TransactionErrorCode.E_150113);
         }
-        // 修改标的状态为还款中
-        project.setProjectStatus(ProjectCode.REPAYING.getCode());
-        this.updateById(project);
-        // 阶段四：启动还款--还款服务生成还款计划
+        // 修改标的状态为还款中,通过RocketMQ事务消息执行本地事务时,再去修改标的状态为还款中
+//        project.setProjectStatus(ProjectCode.REPAYING.getCode());
+//        this.updateById(project);
+        // 阶段四：启动还款--还款服务生成还款计划,基于RocketMQ事务消息来保证事务(修改标的状态为还款中和生成还款计划是原子性)的最终一致性
         ProjectWithTendersDTO projectWithTendersDTO = new ProjectWithTendersDTO();
         projectWithTendersDTO.setProject(convertProjectEntityToDTO(project));
         projectWithTendersDTO.setTenders(convertTenderDTO(tenderList));
         projectWithTendersDTO.setCommissionInvestorAnnualRate(configService.getCommissionInvestorAnnualRate());
         projectWithTendersDTO.setCommissionBorrowerAnnualRate(configService.getCommissionBorrowerAnnualRate());
+        // 发送事务消息(半消息)到Broker中,RocketMQ解决放款中事务的一致性流程图.jpg中的第1.步
+        loansApprovalStatusTransactionalProducer.updateProjectStatusAndStartRepayment(project, projectWithTendersDTO);
         return "ok";
+    }
+
+    @Transactional(rollbackFor = BusinessException.class)
+    @Override
+    public Boolean updateProjectStatusAndStartRepayment(Project project) {
+        project.setProjectStatus(ProjectCode.REPAYING.getCode());
+        return this.updateById(project);
     }
 
     /**

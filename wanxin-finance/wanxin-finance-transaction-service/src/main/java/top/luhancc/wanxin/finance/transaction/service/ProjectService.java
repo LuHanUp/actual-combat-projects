@@ -76,4 +76,14 @@ public interface ProjectService extends IService<Project> {
      * @return
      */
     String loansApprovalStatus(Long id, String approveStatus, String commission);
+
+    /**
+     * 更新标的状态为还款中
+     * <p>
+     * 此为RocketMQ解决放款中事务的一致性流程图.jpg中的第4.步
+     *
+     * @param project
+     * @return
+     */
+    Boolean updateProjectStatusAndStartRepayment(Project project);
 }

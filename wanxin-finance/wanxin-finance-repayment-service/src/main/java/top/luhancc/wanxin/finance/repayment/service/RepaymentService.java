@@ -16,4 +16,13 @@ public interface RepaymentService {
      * @return
      */
     String startRepayment(ProjectWithTendersDTO projectWithTendersDTO);
+
+    /**
+     * 通过标的id和借款人id查询还款计划记录数
+     *
+     * @param consumerId 借款人id
+     * @param projectId  标的id
+     * @return
+     */
+    int getRepaymentCountByProjectIdAndConsumerId(Long consumerId, Long projectId);
 }

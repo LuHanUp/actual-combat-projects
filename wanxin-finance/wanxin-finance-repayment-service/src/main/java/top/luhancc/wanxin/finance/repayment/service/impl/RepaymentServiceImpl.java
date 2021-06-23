@@ -1,5 +1,7 @@
 package top.luhancc.wanxin.finance.repayment.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,14 @@ public class RepaymentServiceImpl implements RepaymentService {
         } else {
             return DepositoryReturnCode.RETURN_CODE_00002.getCode();
         }
+    }
+
+    @Override
+    public int getRepaymentCountByProjectIdAndConsumerId(Long consumerId, Long projectId) {
+        LambdaQueryWrapper<RepaymentPlan> queryWrapper = Wrappers.<RepaymentPlan>lambdaQuery()
+                .eq(RepaymentPlan::getConsumerId, consumerId)
+                .eq(RepaymentPlan::getProjectId, projectId);
+        return repaymentPlanMapper.selectCount(queryWrapper);
     }
 
     /**

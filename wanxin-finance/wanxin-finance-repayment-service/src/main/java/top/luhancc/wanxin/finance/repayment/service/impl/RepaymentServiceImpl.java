@@ -11,6 +11,7 @@ import top.luhancc.wanxin.finance.common.domain.model.depository.agent.Depositor
 import top.luhancc.wanxin.finance.common.domain.model.depository.agent.UserAutoPreTransactionRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.EqualInterestRepayment;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.ProjectWithTendersDTO;
+import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentDetailRequest;
 import top.luhancc.wanxin.finance.common.domain.model.repayment.RepaymentRequest;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.ProjectDTO;
 import top.luhancc.wanxin.finance.common.domain.model.transaction.TenderDTO;
@@ -26,6 +27,7 @@ import top.luhancc.wanxin.finance.repayment.mapper.entity.ReceivableDetail;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.ReceivablePlan;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentDetail;
 import top.luhancc.wanxin.finance.repayment.mapper.entity.RepaymentPlan;
+import top.luhancc.wanxin.finance.repayment.message.RepaymentMessageProducer;
 import top.luhancc.wanxin.finance.repayment.service.RepaymentService;
 
 import javax.annotation.Resource;
@@ -52,6 +54,8 @@ public class RepaymentServiceImpl implements RepaymentService {
     private ReceivableDetailMapper receivableDetailMapper;
     @Autowired
     private DepositoryAgentFeign depositoryAgentFeign;
+    @Autowired
+    private RepaymentMessageProducer repaymentMessageProducer;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -91,8 +95,28 @@ public class RepaymentServiceImpl implements RepaymentService {
     }
 
     @Override
-    public List<RepaymentPlan> selectDueRepayment(String date) {
-        return repaymentPlanMapper.selectDueRepayment(date);
+    public void executeRepayment(String date, int shardingTotal, int shardingItem) {
+        //查询到期的还款计划
+        List<RepaymentPlan> repaymentPlanList = selectDueRepayment(date, shardingTotal, shardingItem);
+        //生成还款明细
+        repaymentPlanList.forEach(repaymentPlan -> {
+            RepaymentDetail repaymentDetail = saveRepaymentDetail(repaymentPlan);
+            System.out.println("当前分片：" + shardingItem + "\n" + repaymentPlan);
+            //还款预处理
+            Boolean proRepaymentResult = preRepayment(repaymentPlan, repaymentDetail.getRequestNo());
+
+            if (proRepaymentResult) {
+                System.out.println("还款预处理成功");
+                String preRequestNo = repaymentDetail.getRequestNo();
+                RepaymentRequest repaymentRequest = generateRepaymentRequest(repaymentPlan, preRequestNo);
+                repaymentMessageProducer.confirmRepayment(repaymentPlan, repaymentRequest);
+            }
+        });
+    }
+
+    @Override
+    public List<RepaymentPlan> selectDueRepayment(String date, int shardingTotal, int shardingItem) {
+        return repaymentPlanMapper.selectDueRepaymentSharding(date, shardingTotal, shardingItem);
     }
 
     @Override
@@ -245,5 +269,39 @@ public class RepaymentServiceImpl implements RepaymentService {
         // 设置投资人让利, 注意这个地方是具体: 佣金
         receivablePlan.setCommission(commissionMap.get(repaymentPlan.getNumberOfPeriods()));
         receivablePlanMapper.insert(receivablePlan);
+    }
+
+    private RepaymentRequest generateRepaymentRequest(RepaymentPlan repaymentPlan, String preRequestNo) {
+        //根据还款计划id,查询应收计划
+        List<ReceivablePlan> receivablePlanList = receivablePlanMapper.selectList(Wrappers.<ReceivablePlan>lambdaQuery().eq(ReceivablePlan::getRepaymentId, repaymentPlan.getId()));
+        RepaymentRequest repaymentRequest = new RepaymentRequest();
+        // 还款总额
+        repaymentRequest.setAmount(repaymentPlan.getAmount());
+        // 业务实体id
+        repaymentRequest.setId(repaymentPlan.getId());
+        // 向借款人收取的佣金
+        repaymentRequest.setCommission(repaymentPlan.getCommission());
+        // 标的编码
+        repaymentRequest.setProjectNo(repaymentPlan.getProjectNo());
+        // 请求流水号
+        repaymentRequest.setRequestNo(CodeNoUtil.getNo(CodePrefixCode.CODE_REQUEST_PREFIX));
+        // 预处理业务流水号
+        repaymentRequest.setPreRequestNo(preRequestNo);
+        List<RepaymentDetailRequest> detailRequests = new ArrayList<>();
+        receivablePlanList.forEach(receivablePlan -> {
+            RepaymentDetailRequest detailRequest = new RepaymentDetailRequest();
+            // 投资人用户编码
+            detailRequest.setUserNo(receivablePlan.getUserNo());
+            // 向投资人收取的佣金
+            detailRequest.setCommission(receivablePlan.getCommission());
+            // 投资人应得本金
+            detailRequest.setAmount(receivablePlan.getPrincipal());
+            // 投资人应得利息
+            detailRequest.setInterest(receivablePlan.getInterest());
+            //添加到集合
+            detailRequests.add(detailRequest);
+        });
+        repaymentRequest.setDetails(detailRequests);
+        return repaymentRequest;
     }
 }

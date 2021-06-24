@@ -14,5 +14,24 @@ import java.util.List;
  * @since 1.0.0
  */
 public interface RepaymentPlanMapper extends BaseMapper<RepaymentPlan> {
+
+    /**
+     * 查询所有到期的还款计划
+     *
+     * @param date 到期时间
+     * @return
+     */
     List<RepaymentPlan> selectDueRepayment(@Param("date") String date);
+
+    /**
+     * 分片查询即将到期的还款计划
+     *
+     * @param date          到期时间
+     * @param shardingTotal 分片总数
+     * @param shardingItem  当前分片值
+     * @return
+     */
+    List<RepaymentPlan> selectDueRepaymentSharding(@Param("date") String date,
+                                                   @Param("shardingTotal") int shardingTotal,
+                                                   @Param("shardingItem") int shardingItem);
 }

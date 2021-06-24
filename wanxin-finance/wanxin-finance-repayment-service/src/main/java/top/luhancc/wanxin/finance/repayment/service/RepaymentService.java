@@ -32,12 +32,23 @@ public interface RepaymentService {
     int getRepaymentCountByProjectIdAndConsumerId(Long consumerId, Long projectId);
 
     /**
+     * 执行还款
+     *
+     * @param date          格式为:yyyy-MM-dd
+     * @param shardingTotal 分片总数
+     * @param shardingItem  当前分片值
+     */
+    void executeRepayment(String date, int shardingTotal, int shardingItem);
+
+    /**
      * 查询到期还款计划
      *
-     * @param date 格式为:yyyy-MM-dd
+     * @param date          格式为:yyyy-MM-dd
+     * @param shardingTotal 分片总数
+     * @param shardingItem  当前分片值
      * @return
      */
-    List<RepaymentPlan> selectDueRepayment(String date);
+    List<RepaymentPlan> selectDueRepayment(String date, int shardingTotal, int shardingItem);
 
     /**
      * 根据还款计划生成还款明细并保存

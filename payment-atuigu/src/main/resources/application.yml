@@ -1,0 +1,14 @@
+# 应用名称
+spring:
+  application:
+    name: payment-atuigu
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.142:3306/payment-atguigu?useUnicode=true&characterEncoding=utf8&useSSL=true
+    username: root
+    password: 123456
+server:
+  port: 8090

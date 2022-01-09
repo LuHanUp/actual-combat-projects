@@ -25,16 +25,16 @@ import java.util.Map;
 @NoArgsConstructor
 @Slf4j
 @SuppressWarnings("unchecked")
-public class R<T> implements Serializable {
+public class R implements Serializable {
     private static final long serialVersionUID = -7546765441679416492L;
 
     private String code;
     private String message;
-    private T data;
+    private Object data;
 
     public R data(String name, Object value) {
         if (this.data == null) {
-            this.data = (T) new HashMap<String, Object>();
+            this.data = new HashMap<String, Object>();
         }
         Map<String, Object> data = (Map<String, Object>) this.data;
         data.put(name, value);
@@ -44,27 +44,23 @@ public class R<T> implements Serializable {
     /**
      * 成功
      *
-     * @param <T>
+     * @param
      * @return
      */
-    public static <T> R<T> ok() {
+    public static R ok() {
         Map<String, Object> data = new HashMap<>();
-        R<Map<String, Object>> r = new R<>();
-        r.setCode(PaymentException.SUCCESS.getCode());
-        r.setMessage(PaymentException.SUCCESS.getDesc());
-        r.setData(data);
-        return (R<T>) r;
+        return R.ok(data);
     }
 
     /**
      * 成功并设置返回结果数据
      *
      * @param data 结果数据
-     * @param <T>
+     * @param
      * @return
      */
-    public static <T> R<T> ok(T data) {
-        return new R<>("00000", "成功", data);
+    public static R ok(Object data) {
+        return new R("00000", "成功", data);
     }
 
     /**
@@ -72,18 +68,18 @@ public class R<T> implements Serializable {
      *
      * @param code    失败码
      * @param message 失败消息
-     * @param <T>
+     * @param
      * @return
      */
-    public static <T> R<T> fail(String code, String message) {
-        return new R<>(code, message, null);
+    public static R fail(String code, String message) {
+        return new R(code, message, null);
     }
 
-    public static <T> R<T> fail(BaseException exception) {
-        return new R<>(exception.getCode(), exception.getDesc(), null);
+    public static R fail(BaseException exception) {
+        return new R(exception.getCode(), exception.getDesc(), null);
     }
 
-    public static <T> R<T> error(Exception exception) {
+    public static R error(Exception exception) {
         log.error("程序发生异常", exception);
         return fail(PaymentException.INTERNAL_ERROR);
     }

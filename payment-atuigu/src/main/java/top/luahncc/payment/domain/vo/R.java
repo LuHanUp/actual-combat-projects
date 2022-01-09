@@ -9,6 +9,8 @@ import top.luahncc.payment.domain.exception.BaseException;
 import top.luahncc.payment.domain.exception.PaymentException;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 统一结果类
@@ -22,12 +24,37 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
+@SuppressWarnings("unchecked")
 public class R<T> implements Serializable {
     private static final long serialVersionUID = -7546765441679416492L;
 
     private String code;
     private String message;
     private T data;
+
+    public R data(String name, Object value) {
+        if (this.data == null) {
+            this.data = (T) new HashMap<String, Object>();
+        }
+        Map<String, Object> data = (Map<String, Object>) this.data;
+        data.put(name, value);
+        return this;
+    }
+
+    /**
+     * 成功
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> R<T> ok() {
+        Map<String, Object> data = new HashMap<>();
+        R<Map<String, Object>> r = new R<>();
+        r.setCode(PaymentException.SUCCESS.getCode());
+        r.setMessage(PaymentException.SUCCESS.getDesc());
+        r.setData(data);
+        return (R<T>) r;
+    }
 
     /**
      * 成功并设置返回结果数据

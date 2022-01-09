@@ -11,6 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PaymentException implements BaseException {
+    SUCCESS("00000", "成功"),
     INTERNAL_ERROR("500", "内部错误,请联系管理员!!!"),
 
     // 1xxxx  商品相关的错误

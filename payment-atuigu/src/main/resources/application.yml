@@ -7,8 +7,13 @@ spring:
     time-zone: GMT+8
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.2.142:3306/payment-atguigu?useUnicode=true&characterEncoding=utf8&useSSL=true
+    url: jdbc:mysql://192.168.2.141:3306/payment-atguigu?useUnicode=true&characterEncoding=utf8&useSSL=true
     username: root
-    password: 123456
+    password: root
 server:
   port: 8090
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:top/luhancc/payment/mapper/xml/**.xml

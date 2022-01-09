@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import top.luahncc.payment.domain.exception.BaseException;
 import top.luahncc.payment.domain.exception.PaymentException;
@@ -25,6 +26,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Slf4j
 @SuppressWarnings("unchecked")
+@Accessors(chain = true)
 public class R implements Serializable {
     private static final long serialVersionUID = -7546765441679416492L;
 
